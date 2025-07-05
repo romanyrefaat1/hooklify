@@ -54,6 +54,18 @@
       opacity: 0;
       transform: translateX(100%);
     }
+    .sps-toast .rich-text {
+      display: inline;
+    }
+    .sps-toast .rich-text.bold {
+      font-weight: bold;
+    }
+    .sps-toast .rich-text.italic {
+      font-style: italic;
+    }
+    .sps-toast .rich-text.underline {
+      text-decoration: underline;
+    }
   `;
   document.head.appendChild(toastStyles);
   
@@ -68,11 +80,45 @@
     });
   }
   
+  function renderRichText(message) {
+    // Check if message is an array (rich text) or string (fallback)
+    if (Array.isArray(message)) {
+      return message.map(segment => {
+        const span = document.createElement('span');
+        span.className = 'rich-text';
+        span.textContent = segment.value;
+        
+        // Apply styles
+        if (segment.style) {
+          span.classList.add(segment.style);
+        }
+        
+        // Apply color
+        if (segment.color) {
+          span.style.color = segment.color;
+        }
+        
+        return span;
+      });
+    } else {
+      // Fallback for string messages
+      const span = document.createElement('span');
+      span.textContent = message;
+      return [span];
+    }
+  }
+  
   function showToast(message) {
     console.log('[SocialProof] Showing toast:', message);
     const toast = document.createElement('div');
     toast.className = 'sps-toast';
-    toast.innerText = message;
+    
+    // Render rich text or plain text
+    const textElements = renderRichText(message);
+    textElements.forEach(element => {
+      toast.appendChild(element);
+    });
+    
     document.body.appendChild(toast);
     
     // Add to active toasts array
@@ -196,12 +242,12 @@
   }
   
   function formatEventMessage(event) {
-    // Check if event has a custom message
+    // Check if event has a custom message (rich text array or string)
     if (event.event_data && event.event_data.message) {
       return event.event_data.message;
     }
     
-    // Fallback to default format
+    // Fallback to default format (as string)
     const name = event.event_data?.name || 'Someone';
     return `${name} just did: ${event.event_type}`;
   }
@@ -412,7 +458,9 @@
   
   // Initialize everything
   console.log('[SocialProof] Testing toast...');
-  showToast('Social proof script loaded successfully!');
+  showToast([
+    {value: 'Social proof script loaded successfully!', style: 'bold', color: '#4CAF50'}
+  ]);
   
   const scriptTag = document.createElement('script');
   scriptTag.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';

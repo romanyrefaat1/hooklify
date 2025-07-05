@@ -6,6 +6,13 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY! // server-only
 );
 
+// Rich text message type
+interface RichTextSegment {
+  value: string;
+  style?: 'bold' | 'italic' | 'underline';
+  color?: string;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const apiKey = req.headers.get('x-api-key');
@@ -17,7 +24,12 @@ export async function POST(req: NextRequest) {
     // Remove the "site_" prefix if present
     const cleanApiKey = apiKey.startsWith('site_') ? apiKey.substring(5) : apiKey;
     
-    const body: { event_type: string; event_data: any; message?: string } = await req.json();
+    const body: { 
+      event_type: string; 
+      event_data: any; 
+      message?: string | RichTextSegment[] 
+    } = await req.json();
+    
     const { event_type, event_data, message } = body;
     
     if (!event_type) {
@@ -44,7 +56,7 @@ export async function POST(req: NextRequest) {
         event_type,
         event_data: {
           ...event_data,
-          message: message || null // Add the message to event_data
+          message: message || null // Add the message (rich text or string) to event_data
         },
         timestamp: new Date().toISOString()
       });
