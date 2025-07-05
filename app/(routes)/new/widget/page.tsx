@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase/client';
 import { useUser } from '@/contexts/AuthContext';
 
 export default function CreateWidgetPage() {
-  const [type] = useState('Toast');
+  const [type] = useState('toast');
   const [siteUrl, setSiteUrl] = useState('https://www.floopr.app');
   const [siteId, setSiteId] = useState('70e5fffc-ed8b-456a-b81a-692290908e31');
   const [name, setName] = useState('Floopr');

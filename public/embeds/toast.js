@@ -1,9 +1,12 @@
 (function () {
   const SUPABASE_URL = 'https://uyzmxzjdnnerroiojmao.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5em14empkbm5lcnJvaW9qbWFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MTkwOTgsImV4cCI6MjA2NzI5NTA5OH0.DYy8Vos2p2A9ollMdGGJCsumYWiqb15hIZFyAy-Hbiw';
-  const apiKey = document.currentScript.getAttribute('data-api-key');
   
-  console.log('[SocialProof] Script starting with API key:', apiKey);
+  // Get both API keys from script attributes
+  const siteApiKey = document.currentScript.getAttribute('site-api-key');
+  const widgetApiKey = document.currentScript.getAttribute('widget-api-key');
+  
+  console.log('[SocialProof] Script starting with Site API key:', siteApiKey, 'Widget API key:', widgetApiKey);
   
   // Configuration
   const CONFIG = {
@@ -18,6 +21,7 @@
   let eventDisplayTimer = null;
   let burstModeTimer = null;
   let currentSiteId = null;
+  let currentWidgetConfig = null;
   let fallbackEvents = [];
   let lastShownEventIndex = -1;
   let isBurstMode = false;
@@ -27,7 +31,26 @@
   // Toast stacking management
   let activeToasts = [];
   
-  // Add toast styles
+  // Default toast styles
+  const DEFAULT_STYLES = {
+    position: 'fixed',
+    right: '20px',
+    background: '#000',
+    color: '#fff',
+    padding: '12px 16px',
+    borderRadius: '8px',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+    fontFamily: 'sans-serif',
+    fontSize: '14px',
+    zIndex: 9999,
+    opacity: 0,
+    transform: 'translateX(100%)',
+    transition: 'all 0.4s ease',
+    maxWidth: '300px',
+    marginBottom: '10px'
+  };
+  
+  // Add base toast styles
   const toastStyles = document.createElement('style');
   toastStyles.innerHTML = `
     .sps-toast {
@@ -39,6 +62,7 @@
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       font-family: sans-serif;
+      font-size: 14px;
       z-index: 9999;
       opacity: 0;
       transform: translateX(100%);
@@ -80,6 +104,18 @@
     });
   }
   
+  function applyCustomStyles(toast, customStyles) {
+    console.log("CUSTOM STYLES", customStyles)
+    if (!customStyles) return;
+    
+    // Apply custom styles from widget configuration
+    console.log("CUSTOM STYLES:", customStyles)
+    Object.keys(customStyles).forEach(key => {
+      const cssProperty = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+      toast.style.setProperty(cssProperty, customStyles[key]);
+    });
+  }
+  
   function renderRichText(message) {
     // Check if message is an array (rich text) or string (fallback)
     if (Array.isArray(message)) {
@@ -112,6 +148,11 @@
     console.log('[SocialProof] Showing toast:', message);
     const toast = document.createElement('div');
     toast.className = 'sps-toast';
+    
+    // Apply custom widget styles if available
+    if (currentWidgetConfig && currentWidgetConfig.style) {
+      applyCustomStyles(toast, currentWidgetConfig.style);
+    }
     
     // Render rich text or plain text
     const textElements = renderRichText(message);
@@ -155,22 +196,25 @@
     }, 5000);
   }
   
-  function getCleanApiKey() {
+  function getCleanApiKey(apiKey, prefix) {
     if (!apiKey) return null;
-    const cleaned = apiKey.startsWith('site_') ? apiKey.substring(5) : apiKey;
+    const cleaned = apiKey.startsWith(prefix) ? apiKey.substring(prefix.length) : apiKey;
     console.log('[SocialProof] Original API key:', apiKey, 'Cleaned:', cleaned);
     return cleaned;
   }
   
   function getCacheKey() {
-    return `social_proof_events_${getCleanApiKey()}`;
+    const cleanSiteKey = getCleanApiKey(siteApiKey, 'site_');
+    const cleanWidgetKey = getCleanApiKey(widgetApiKey, 'widget_');
+    return `social_proof_events_${cleanSiteKey}_${cleanWidgetKey}`;
   }
   
-  function saveEventsToCache(events, siteId) {
+  function saveEventsToCache(events, siteId, widgetConfig) {
     const cacheData = {
       events,
       timestamp: Date.now(),
       siteId,
+      widgetConfig,
       lastShownIndex: -1
     };
     
@@ -352,6 +396,35 @@
     }
   }
   
+  async function fetchWidgetConfig() {
+    if (!supabaseClient || !widgetApiKey) {
+      console.error('[SocialProof] Cannot fetch widget config: missing supabase client or widget API key');
+      return null;
+    }
+    
+    try {
+      const cleanWidgetKey = getCleanApiKey(widgetApiKey, 'widget_');
+      console.log('[SocialProof] Fetching widget config for key:', cleanWidgetKey);
+      
+      const { data, error } = await supabaseClient
+        .from('widgets')
+        .select('*')
+        .eq('api_key', cleanWidgetKey)
+        .single();
+      
+      if (error) {
+        console.error('[SocialProof] Error fetching widget config:', error);
+        return null;
+      }
+      
+      console.log('[SocialProof] Fetched widget config:', data);
+      return data;
+    } catch (error) {
+      console.error('[SocialProof] Exception fetching widget config:', error);
+      return null;
+    }
+  }
+  
   async function initializeFallbackEvents() {
     console.log('[SocialProof] Initializing fallback events...');
     
@@ -360,10 +433,14 @@
     
     if (cachedData && cachedData.events.length > 0) {
       fallbackEvents = cachedData.events;
+      currentWidgetConfig = cachedData.widgetConfig;
       lastShownEventIndex = cachedData.lastShownIndex;
       console.log('[SocialProof] Using cached events:', fallbackEvents.length);
       return;
     }
+    
+    // Fetch widget config
+    currentWidgetConfig = await fetchWidgetConfig();
     
     // Only fetch if we have a site ID
     if (currentSiteId) {
@@ -372,7 +449,7 @@
       
       if (events.length > 0) {
         fallbackEvents = events;
-        saveEventsToCache(events, currentSiteId);
+        saveEventsToCache(events, currentSiteId, currentWidgetConfig);
         console.log('[SocialProof] Fetched and cached fresh events:', events.length);
       } else {
         console.warn('[SocialProof] No fallback events available for site');
@@ -383,20 +460,20 @@
   }
   
   async function getSiteIdFromApiKey() {
-    if (!supabaseClient || !apiKey) {
-      console.error('[SocialProof] Cannot lookup site: missing supabase client or API key');
-      console.log('[SocialProof] Debug - supabaseClient:', !!supabaseClient, 'apiKey:', apiKey);
+    if (!supabaseClient || !siteApiKey) {
+      console.error('[SocialProof] Cannot lookup site: missing supabase client or site API key');
+      console.log('[SocialProof] Debug - supabaseClient:', !!supabaseClient, 'siteApiKey:', siteApiKey);
       return null;
     }
     
     try {
-      const cleanApiKey = getCleanApiKey();
-      console.log('[SocialProof] Looking up site for API key:', cleanApiKey);
+      const cleanSiteKey = getCleanApiKey(siteApiKey, 'site_');
+      console.log('[SocialProof] Looking up site for API key:', cleanSiteKey);
       
       const { data, error } = await supabaseClient
         .from('sites')
         .select('id, site_url')
-        .eq('api_key', cleanApiKey)
+        .eq('api_key', cleanSiteKey)
         .single();
       
       if (error) {
@@ -456,6 +533,12 @@
     activeToasts = [];
   }
   
+  // Validate required parameters
+  if (!siteApiKey || !widgetApiKey) {
+    console.error('[SocialProof] Missing required API keys. Both site-api-key and widget-api-key are required.');
+    return;
+  }
+  
   // Initialize everything
   console.log('[SocialProof] Testing toast...');
   showToast([
@@ -479,16 +562,17 @@
       if (!currentSiteId) {
         console.error('[SocialProof] Could not determine site ID from API key');
         console.log('[SocialProof] This means either:');
-        console.log('1. The API key is incorrect');
+        console.log('1. The site API key is incorrect');
         console.log('2. The site doesn\'t exist in the database');
         console.log('3. There\'s a database connection issue');
         return;
       }
       
-      // Initialize fallback events
-      console.log('[SocialProof] Initializing fallback events...');
+      // Initialize fallback events and widget config
+      console.log('[SocialProof] Initializing fallback events and widget config...');
       await initializeFallbackEvents();
       console.log('[SocialProof] Fallback events initialized. Count:', fallbackEvents.length);
+      console.log('[SocialProof] Widget config:', currentWidgetConfig);
       
       // Set up broadcast subscription
       console.log('[SocialProof] Setting up broadcast subscription...');
