@@ -30,6 +30,7 @@ export default function RootLayout({
       >
         <AuthProvider>
         {children}
+        <script src="http://localhost:3000/embeds/toast.js" data-api-key="site_9a60c59f-c247-4af4-8048-855be6898e2a"></script>
         </AuthProvider>
       </body>
     </html>
