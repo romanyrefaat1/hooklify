@@ -30,27 +30,32 @@
   
   // Toast stacking management
   let activeToasts = [];
+
+  function timeAgo(date) {
+    const now = new Date();
+    const seconds = Math.floor((now - new Date(date)) / 1000);
+
+    let interval = seconds / 31536000;
+    if (interval > 1) return Math.floor(interval) + " years ago";
+
+    interval = seconds / 2592000;
+    if (interval > 1) return Math.floor(interval) + " months ago";
+
+    interval = seconds / 86400;
+    if (interval > 1) return Math.floor(interval) + " days ago";
+
+    interval = seconds / 3600;
+    if (interval > 1) return Math.floor(interval) + " hours ago";
+
+    interval = seconds / 60;
+    if (interval > 1) return Math.floor(interval) + " minutes ago";
+
+    if (seconds < 10) return "just now";
+
+    return Math.floor(seconds) + " seconds ago";
+  }
   
-  // Default toast styles
-  const DEFAULT_STYLES = {
-    position: 'fixed',
-    right: '20px',
-    background: '#000',
-    color: '#fff',
-    padding: '12px 16px',
-    borderRadius: '8px',
-    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
-    fontFamily: 'sans-serif',
-    fontSize: '14px',
-    zIndex: 9999,
-    opacity: 0,
-    transform: 'translateX(100%)',
-    transition: 'all 0.4s ease',
-    maxWidth: '300px',
-    marginBottom: '10px'
-  };
-  
-  // Add base toast styles
+  // Enhanced toast styles with smooth animations
   const toastStyles = document.createElement('style');
   toastStyles.innerHTML = `
     .sps-toast {
@@ -65,21 +70,108 @@
       font-size: 14px;
       z-index: 9999;
       opacity: 0;
-      transform: translateX(100%);
-      transition: all 0.4s ease;
+      /* Enhanced transition with custom easing */
+      transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       max-width: 300px;
       margin-bottom: 10px;
+      /* Initial scale for smoother entrance */
+      transform: scale(0.9);
+      /* Add subtle backdrop blur effect */
+      backdrop-filter: blur(9px);
+      /* Enhanced shadow for depth */
+      box-shadow: 
+        0 4px 20px rgba(0,0,0,0.15),
+        0 2px 10px rgba(0,0,0,0.1),
+        0 0 0 1px rgba(255,255,255,0.05);
+      /* Performance optimization */
+      will-change: transform, opacity;
     }
+    
+    /* Entrance animations with scale and smooth easing */
+    .sps-toast.from-right {
+      transform: translateX(100%) scale(0.9);
+    }
+    .sps-toast.from-left {
+      transform: translateX(-100%) scale(0.9);
+    }
+    .sps-toast.from-top {
+      transform: translateY(-100%) scale(0.9);
+    }
+    .sps-toast.from-bottom {
+      transform: translateY(100%) scale(0.9);
+    }
+    
+    /* Show state with perfect scale and positioning */
     .sps-toast.show {
       opacity: 1;
-      transform: translateX(0);
+      transform: translateX(0) translateY(0) scale(1);
+      /* Add a subtle bounce effect */
+      animation: toastBounce 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
-    .sps-toast.hide {
+    
+    /* Enhanced exit animations with scale down */
+    .sps-toast.hide.from-right {
       opacity: 0;
-      transform: translateX(100%);
+      transform: translateX(100%) scale(0.8);
+      transition: all 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19);
     }
+    .sps-toast.hide.from-left {
+      opacity: 0;
+      transform: translateX(-100%) scale(0.8);
+      transition: all 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    }
+    .sps-toast.hide.from-top {
+      opacity: 0;
+      transform: translateY(-100%) scale(0.8);
+      transition: all 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    }
+    .sps-toast.hide.from-bottom {
+      opacity: 0;
+      transform: translateY(100%) scale(0.8);
+      transition: all 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    }
+    
+    /* Subtle bounce keyframe animation */
+    @keyframes toastBounce {
+      0% {
+        transform: translateX(0) translateY(0) scale(0.9);
+        opacity: 20;
+      }
+      50% {
+        transform: translateX(0) translateY(0) scale(1.01);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateX(0) translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+    
+    /* Smooth hover effect for interactive feel */
+    .sps-toast:hover {
+      transform: translateX(0) translateY(0) scale(1.05);
+      box-shadow: 
+        0 6px 25px rgba(0,0,0,0.2),
+        0 4px 15px rgba(0,0,0,0.15),
+        0 0 0 1px rgba(255,255,255,0.1);
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    /* Smooth positioning transitions for stacking */
+    .sps-toast {
+      transition: 
+        opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        top 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        bottom 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    /* Rich text styling with smooth transitions */
     .sps-toast .rich-text {
       display: inline;
+      transition: all 0.3s ease;
     }
     .sps-toast .rich-text.bold {
       font-weight: bold;
@@ -90,18 +182,98 @@
     .sps-toast .rich-text.underline {
       text-decoration: underline;
     }
+    
+    /* Micro-animations for text elements */
+    .sps-toast .rich-text:hover {
+      transform: scale(1.05);
+      transition: transform 0.2s ease;
+    }
+    
+    /* Smooth fade-in for stacked toasts */
+    .sps-toast.stacked {
+      animation: stackedFadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    @keyframes stackedFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    /* Accessibility: Respect reduced motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+      .sps-toast {
+        animation: none;
+        transition: opacity 0.3s ease;
+      }
+      .sps-toast.show {
+        animation: none;
+      }
+    }
   `;
   document.head.appendChild(toastStyles);
   
   // Utility functions
-  function updateToastPositions() {
-    let bottomOffset = 20;
+  function updateToastPositionsSmooth() {
+    const customStyles = currentWidgetConfig?.style || {};
+    const hasTop = customStyles.top !== undefined;
+    const hasBottom = customStyles.bottom !== undefined;
+    const hasLeft = customStyles.left !== undefined;
+    const hasRight = customStyles.right !== undefined;
     
-    // Update positions from bottom to top
-    activeToasts.forEach((toast, index) => {
-      toast.style.bottom = bottomOffset + 'px';
-      bottomOffset += toast.offsetHeight + 10; // 10px gap between toasts
+    let offset = 20;
+    
+    // Use requestAnimationFrame for smoother positioning
+    requestAnimationFrame(() => {
+      // Determine stacking direction and positioning
+      if (hasTop && !hasBottom) {
+        // Stack downward from top
+        activeToasts.forEach((toast, index) => {
+          toast.style.top = offset + 'px';
+          toast.style.bottom = 'auto';
+          offset += toast.offsetHeight + 10; // 10px gap between toasts
+          
+          // Add stacked class for additional animations
+          if (index > 0) {
+            toast.classList.add('stacked');
+          }
+        });
+      } else {
+        // Default: stack upward from bottom
+        activeToasts.forEach((toast, index) => {
+          toast.style.bottom = offset + 'px';
+          toast.style.top = 'auto';
+          offset += toast.offsetHeight + 10; // 10px gap between toasts
+          
+          // Add stacked class for additional animations
+          if (index > 0) {
+            toast.classList.add('stacked');
+          }
+        });
+      }
+      
+      // Ensure horizontal positioning is preserved with smooth transitions
+      if (hasLeft && !hasRight) {
+        activeToasts.forEach(toast => {
+          toast.style.left = customStyles.left;
+          toast.style.right = 'auto';
+        });
+      } else if (hasRight && !hasLeft) {
+        activeToasts.forEach(toast => {
+          toast.style.right = customStyles.right;
+          toast.style.left = 'auto';
+        });
+      }
     });
+  }
+  
+  function updateToastPositions() {
+    updateToastPositionsSmooth();
   }
   
   function applyCustomStyles(toast, customStyles) {
@@ -112,6 +284,12 @@
     console.log("CUSTOM STYLES:", customStyles)
     Object.keys(customStyles).forEach(key => {
       const cssProperty = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+      
+      // For certain properties, add smooth transitions
+      if (['background', 'color', 'border-radius', 'padding', 'margin'].includes(cssProperty)) {
+        toast.style.transition = toast.style.transition + `, ${cssProperty} 0.3s ease`;
+      }
+      
       toast.style.setProperty(cssProperty, customStyles[key]);
     });
   }
@@ -144,56 +322,133 @@
     }
   }
   
-  function showToast(message) {
+  function showToast(message, timestamp) {
     console.log('[SocialProof] Showing toast:', message);
+  
     const toast = document.createElement('div');
     toast.className = 'sps-toast';
-    
+  
+    const href = currentWidgetConfig?.href;
+    let containerElement = toast; // Default container is the toast itself
+  
+    // If href exists, create a wrapper link
+    if (href) {
+      const aTag = document.createElement("a");
+      aTag.href = href;
+      aTag.style.textDecoration = 'none'; // Remove default link styling
+      aTag.style.color = 'inherit'; // Inherit color from toast
+      aTag.appendChild(toast);
+      containerElement = aTag; // Container becomes the link
+    }
+  
+    // Determine animation direction based on custom styles
+    const customStyles = currentWidgetConfig?.style || {};
+    const hasLeft = customStyles.left !== undefined;
+    const hasRight = customStyles.right !== undefined;
+    const hasTop = customStyles.top !== undefined;
+    const hasBottom = customStyles.bottom !== undefined;
+  
+    // Set animation class based on positioning
+    if (hasLeft && !hasRight) {
+      toast.classList.add('from-left');
+    } else if (hasRight && !hasLeft) {
+      toast.classList.add('from-right');
+    } else if (hasTop && !hasBottom) {
+      toast.classList.add('from-top');
+    } else if (hasBottom && !hasTop) {
+      toast.classList.add('from-bottom');
+    } else {
+      // Default: from right
+      toast.classList.add('from-right');
+    }
+  
     // Apply custom widget styles if available
     if (currentWidgetConfig && currentWidgetConfig.style) {
       applyCustomStyles(toast, currentWidgetConfig.style);
     }
-    
+  
     // Render rich text or plain text
     const textElements = renderRichText(message);
     textElements.forEach(element => {
       toast.appendChild(element);
     });
-    
-    document.body.appendChild(toast);
-    
+  
+    // Add footer with time ago and "Powered by Hooklify"
+    const footer = document.createElement('div');
+    footer.style.cssText = `
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 11px;
+      opacity: 0.7;
+    `;
+  
+    // Time ago element
+    const timeAgoEl = document.createElement('span');
+    timeAgoEl.textContent = timeAgo(timestamp);
+    timeAgoEl.style.color = currentWidgetConfig?.style?.color || 'rgba(255, 255, 255, 0.8)';
+  
+    // Update time every 5 seconds
+    const intervalId = setInterval(() => {
+      timeAgoEl.textContent = timeAgo(timestamp);
+    }, 5000);
+
+    // Powered by element
+    const poweredBy = document.createElement('span');
+    poweredBy.innerHTML = 'Powered by <a href="https://hooklify.vercel.app" target="_blank" rel="noopener noreferrer" style="color:rgb(38, 100, 40); text-decoration: none; font-weight: 700; font-size: 12px">Hooklify</a>';
+  
+    footer.appendChild(timeAgoEl);
+    footer.appendChild(poweredBy);
+    toast.appendChild(footer);
+  
+    // Add to DOM first (but invisible) - use containerElement (either toast or aTag)
+    document.body.appendChild(containerElement);
+  
     // Add to active toasts array
     activeToasts.push(toast);
-    
-    // Update positions immediately
+  
+    // Update positions with smooth transition
     updateToastPositions();
-    
-    // Show the toast
-    setTimeout(() => {
+  
+    // Force reflow to ensure initial state is applied
+    toast.offsetHeight;
+  
+    // Show the toast with smooth animation
+    // Use requestAnimationFrame for smoother timing
+    requestAnimationFrame(() => {
       toast.classList.add('show');
-    }, 100);
-    
-    // Hide and remove the toast after 5 seconds
-    setTimeout(() => {
+    });
+  
+    // Enhanced hide sequence with better timing
+    const hideTimeout = setTimeout(() => {
       toast.classList.remove('show');
       toast.classList.add('hide');
-      
+  
+      // Wait for exit animation to complete
       setTimeout(() => {
         // Remove from active toasts array
         const index = activeToasts.indexOf(toast);
         if (index > -1) {
           activeToasts.splice(index, 1);
         }
-        
-        // Remove from DOM
-        if (toast.parentNode) {
-          toast.parentNode.removeChild(toast);
+ 
+        clearInterval(intervalId);
+
+        // Remove from DOM - remove the container element
+        if (containerElement.parentNode) {
+          containerElement.parentNode.removeChild(containerElement);
         }
-        
-        // Update positions of remaining toasts
-        updateToastPositions();
-      }, 400);
+  
+        // Smooth repositioning of remaining toasts
+        updateToastPositionsSmooth();
+      }, 400); // Match the CSS transition duration
     }, 5000);
+  
+    // Store timeout reference for potential cleanup
+    toast._hideTimeout = hideTimeout;
   }
   
   function getCleanApiKey(apiKey, prefix) {
@@ -319,7 +574,8 @@
     // Only show toast if we have an event
     if (eventToShow) {
       const message = formatEventMessage(eventToShow);
-      showToast(message);
+      const timestamp = eventToShow.timestamp;
+      showToast(message, timestamp);
     }
     
     // Schedule next event
@@ -358,13 +614,22 @@
   function startBurstMode() {
     console.log('[SocialProof] Starting burst mode');
     isBurstMode = true;
-    burstEventCount = 0;
+    burstEventCount = Math.floor(Math.random() * 4) + 2; // 2-5 events
     
-    // Schedule the next burst
-    const nextBurst = CONFIG.BURST_INTERVAL + (Math.random() - 0.5) * CONFIG.BURST_VARIANCE;
-    burstModeTimer = setTimeout(() => {
-      startBurstMode();
-    }, nextBurst);
+    const showBurstEvent = () => {
+      if (burstEventCount > 0) {
+        const message = liveEventQueue.length > 0 ? liveEventQueue.shift() : null;
+        if (message) {
+          showToast(message);
+        }
+        burstEventCount--;
+        setTimeout(showBurstEvent, (Math.random() * 5 + 2) * 1000); // 2-7 seconds between events
+      } else {
+        isBurstMode = false;
+        console.log('[SocialProof] Burst mode complete, switching to normal mode');
+      }
+    };
+    showBurstEvent();
   }
   
   async function fetchFallbackEvents() {
@@ -492,14 +757,13 @@
   
   function handleLiveEvent(payload) {
     console.log('[SocialProof] Received live event:', payload);
-    
-    // Add to live event queue
-    liveEventQueue.push(payload.payload);
-    
-    // If we're not currently in burst mode and no events are scheduled,
-    // show the live event immediately
-    if (!eventDisplayTimer && !isBurstMode) {
-      displayNextEvent();
+    const message = payload.message || 'A new event occurred!';
+    const timestamp = payload.timestamp;
+
+    if (isBurstMode) {
+      liveEventQueue.push(message);
+    } else {
+      showToast(message, timestamp);
     }
   }
   
@@ -524,12 +788,23 @@
       clearTimeout(burstModeTimer);
     }
     
-    // Clean up any remaining toasts
+    // Clean up any remaining toasts with smooth exit
     activeToasts.forEach(toast => {
-      if (toast.parentNode) {
-        toast.parentNode.removeChild(toast);
+      // Cancel any pending hide timeouts
+      if (toast._hideTimeout) {
+        clearTimeout(toast._hideTimeout);
       }
+      
+      // Smooth exit animation
+      toast.classList.add('hide');
+      
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast);
+        }
+      }, 400);
     });
+    
     activeToasts = [];
   }
   
