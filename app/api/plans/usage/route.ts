@@ -1,21 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/server';
 import { cookies } from 'next/headers';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createClient();
     
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get user's current usage
-    const { data: user } = await supabase
+    const { data: userData } = await supabase
       .from('users')
       .select('plan_type, events_used_this_month, events_reset_date')
-      .eq('id', session.user.id)
+      .eq('id', user.id)
       .single();
 
     // Get plan limits

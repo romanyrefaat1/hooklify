@@ -3,13 +3,8 @@
 // ============================================
 
 // lib/dodo-payments.ts
-import DodoPayments from 'dodopayments';
-
-// Initialize DodoPayments client
-export const dodoPayments = new DodoPayments({
-  // bearerToken: process.env['DODO_PAYMENTS_API_KEY']
-  bearerToken: "C9-qsQE38WwiuLUS.YMcrc0nqrUPtRkSvM88S3BfPQzGFKNyYT-f5EzjGaEfvs3Yv"
-});
+// DodoPayments client is only available server-side. Do NOT use or import on the frontend.
+// All payment logic requiring secret keys must be in backend API routes.
 
 // Product configuration for Hooklify (separate products for each billing cycle)
 export const HOOKLIFY_PLANS = {
@@ -19,11 +14,11 @@ export const HOOKLIFY_PLANS = {
     features: ['10,000 events per month', '5 websites', 'Email support'],
     monthly: {
       price: 2900, // $29.00 in cents
-      productId: 'prod_growth_monthly', // You'll get this from DodoPayments dashboard
+      productId: 'pdt_6NYDGBhZ7D3rj05iPO29Z', // You'll get this from DodoPayments dashboard
     },
     annual: {
       price: 29000, // $290.00 in cents (10 months price)
-      productId: 'prod_growth_annual', // You'll get this from DodoPayments dashboard
+      productId: 'pdt_FHBwVXFAEAGljK19stmB9', // You'll get this from DodoPayments dashboard
     },
   },
   pro: {
@@ -32,11 +27,11 @@ export const HOOKLIFY_PLANS = {
     features: ['50,000 events per month', '25 websites', 'Priority support'],
     monthly: {
       price: 7900, // $79.00 in cents
-      productId: 'prod_pro_monthly', // You'll get this from DodoPayments dashboard
+      productId: 'pdt_wuyv1DOxA8maODUSmUSpx', // You'll get this from DodoPayments dashboard
     },
     annual: {
       price: 79000, // $790.00 in cents (10 months price)
-      productId: 'prod_pro_annual', // You'll get this from DodoPayments dashboard
+      productId: 'pdt_FrX4gyhjOOCHvBEk1q5qD', // You'll get this from DodoPayments dashboard
     },
   },
 } as const;
@@ -72,88 +67,8 @@ export interface WebhookEvent {
   };
 }
 
-// Helper function to create subscription
-export async function createSubscription({
-  planType,
-  billingCycle,
-  userId,
-  userEmail,
-  customerName,
-  successUrl,
-  cancelUrl,
-}: CreateSubscriptionParams) {
-  if (planType === 'free') {
-    throw new Error('Cannot create subscription for free plan');
-  }
-
-  const plan = HOOKLIFY_PLANS[planType];
-  const productId = plan[billingCycle].productId;
-
-  try {
-    const subscription = await dodoPayments.subscriptions.create({
-      customer: {
-        email: userEmail,
-        name: customerName,
-      },
-      product_id: productId,
-      payment_link: true,
-      success_url: successUrl,
-      cancel_url: cancelUrl,
-      metadata: {
-        userId,
-        planType,
-        billingCycle,
-      },
-      billing: {
-        street: 'N/A',
-        city: 'Cairo',
-        state: 'Cairo',
-        country: 'EG',
-        zipcode: '11435',
-      },
-    });
-
-    return subscription;
-  } catch (error) {
-    console.error('Error creating subscription:', error);
-    throw error;
-  }
-}
-
-// Helper function to get subscription details
-export async function getSubscription(subscriptionId: string) {
-  try {
-    const subscription = await dodoPayments.subscriptions.retrieve(subscriptionId);
-    return subscription;
-  } catch (error) {
-    console.error('Error retrieving subscription:', error);
-    throw error;
-  }
-}
-
-// Helper function to cancel subscription
-export async function cancelSubscription(subscriptionId: string) {
-  try {
-    const subscription = await dodoPayments.subscriptions.cancel(subscriptionId);
-    return subscription;
-  } catch (error) {
-    console.error('Error canceling subscription:', error);
-    throw error;
-  }
-}
-
-// Helper function to get customer subscriptions
-export async function getCustomerSubscriptions(customerId: string) {
-  try {
-    const subscriptions = await dodoPayments.subscriptions.list({
-      customer_id: customerId,
-    });
-    return subscriptions;
-  } catch (error) {
-    console.error('Error retrieving customer subscriptions:', error);
-    throw error;
-  }
-}
+// All DodoPayments logic is now backend-only. Use API routes for payment actions.
+// This file is now frontend-safe and only exports types, plan metadata, and utility functions.
 
 // Helper function to verify webhook signature (if DodoPayments supports it)
 export function verifyWebhookSignature(payload: string, signature: string): boolean {
@@ -181,6 +96,10 @@ export function parseWebhookEvent(payload: string): WebhookEvent {
 
 // Helper function to get plan details
 export function getPlanDetails(planType: PlanType, billingCycle: BillingCycle) {
+  // Validate input
+  if (!planType || !billingCycle) {
+    throw new Error(`Missing planType or billingCycle: planType=${planType}, billingCycle=${billingCycle}`);
+  }
   if (planType === 'free') {
     return {
       name: 'Free Plan',
@@ -194,7 +113,13 @@ export function getPlanDetails(planType: PlanType, billingCycle: BillingCycle) {
   }
 
   const plan = HOOKLIFY_PLANS[planType];
+  if (!plan) {
+    throw new Error(`Invalid plan type: ${planType}`);
+  }
   const pricing = plan[billingCycle];
+  if (!pricing) {
+    throw new Error(`Invalid billing cycle: ${billingCycle} for plan type: ${planType}`);
+  }
 
   return {
     name: plan.name,

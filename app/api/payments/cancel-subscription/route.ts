@@ -1,25 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/server';
 import { cookies } from 'next/headers';
 import { cancelSubscription } from '@/lib/dodo-payments';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createClient();
     
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get user's subscription
-    const { data: user } = await supabase
+    const { data: userData } = await supabase
       .from('users')
       .select('subscription_id, subscription_status')
-      .eq('id', session.user.id)
+      .eq('id', user.id)
       .single();
 
-    if (!user?.subscription_id) {
+    if (!userData?.subscription_id) {
       return NextResponse.json({ error: 'No active subscription' }, { status: 400 });
     }
 
