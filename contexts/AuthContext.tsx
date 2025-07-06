@@ -27,13 +27,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const getCurrentUser = async () => {
             try {
                 const {
-                    data: { user },
+                    data: { user: authUser },
                 } = await supabase.auth.getUser()
 
-                if (user) {
+                if (authUser) {
+
+                    // Get user with user.id === authUser.id
+                    const { data: user } = await supabase.from('users').select().eq('id', authUser.id).single()
+                    
                     setUser({
-                        id: user.id,
-                        email: user.email!,
+                        id: authUser.id,
+                        email: authUser.email!,
                     })
                 } else {
                     setUser(null)
@@ -53,7 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } = supabase.auth.onAuthStateChange((_event, session) => {
             if (session?.user) {
                 setUser({
-                    id: session.user.id,
+                    id: session.user.id, // This is now the same as users.id
                     email: session.user.email!,
                 })
             } else {
