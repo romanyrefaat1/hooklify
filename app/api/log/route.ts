@@ -24,10 +24,10 @@ export async function POST(req: NextRequest) {
     // Remove the "site_" prefix if present
     const cleanApiKey = apiKey.startsWith('site_') ? apiKey.substring(5) : apiKey;
     
-    const body: { 
-      event_type: string; 
-      event_data: any; 
-      message?: string | RichTextSegment[] 
+    const body: {
+      event_type: string;
+      event_data: any;
+      message?: string | RichTextSegment[]
     } = await req.json();
     
     const { event_type, event_data, message } = body;
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     // Look up the site using the clean API key
     const { data: site, error: siteError } = await supabaseAdmin
       .from('sites')
-      .select('*')
+      .select('*, user_id') // Make sure to select user_id
       .eq('api_key', cleanApiKey)
       .single();
     
@@ -47,6 +47,25 @@ export async function POST(req: NextRequest) {
       console.error('Site lookup error:', siteError);
       return NextResponse.json({ error: 'Invalid API key' }, { status: 403 });
     }
+
+    // ============================================
+    // USAGE LIMIT CHECK - Add this section
+    // ============================================
+    
+    // Check if user can track more events
+    const { data: canTrack } = await supabaseAdmin
+      .rpc('can_track_event', { user_uuid: site.user_id });
+
+    if (!canTrack) {
+      return NextResponse.json({ 
+        error: 'Event limit reached for your plan',
+        upgradeRequired: true 
+      }, { status: 403 });
+    }
+
+    // ============================================
+    // END USAGE LIMIT CHECK
+    // ============================================
     
     // Insert the event
     const { error: insertError, data } = await supabaseAdmin
@@ -67,6 +86,30 @@ export async function POST(req: NextRequest) {
       console.error('Event insert error:', insertError);
       return NextResponse.json({ error: 'Failed to log event' }, { status: 500 });
     }
+
+    // ============================================
+    // INCREMENT USAGE COUNTER - Add this section
+    // ============================================
+    
+    // Get current usage and increment
+    const { data: user } = await supabaseAdmin
+      .from('users')
+      .select('events_used_this_month')
+      .eq('id', site.user_id)
+      .single();
+
+    if (user) {
+      await supabaseAdmin
+        .from('users')
+        .update({
+          events_used_this_month: (user.events_used_this_month || 0) + 1
+        })
+        .eq('id', site.user_id);
+    }
+
+    // ============================================
+    // END INCREMENT USAGE COUNTER
+    // ============================================
     
     // Send broadcast message to all connected clients
     const broadcastPayload = {
