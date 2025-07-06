@@ -6,11 +6,22 @@ import { PlanType, BillingCycle } from '@/lib/dodo-payments';
 import { toast } from 'sonner';
 import PricingCard from '@/components/pricing/PricingCard';
 import PricingToggle from '@/components/pricing/PricingToggle';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface CurrentPlan {
   plan_type: PlanType;
   billing_cycle: BillingCycle;
   subscription_status: string;
+}
+
+interface BillingAddress {
+  street: string;
+  city: string;
+  state: string;
+  country: string;
+  zipcode: string;
 }
 
 export default function PricingPage() {
@@ -19,72 +30,90 @@ export default function PricingPage() {
   const [currentPlan, setCurrentPlan] = useState<CurrentPlan | null>(null);
   const [loading, setLoading] = useState<{ [key: string]: boolean }>({});
   const [isLoadingPlan, setIsLoadingPlan] = useState(true);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<{ planType: PlanType; billingCycle: BillingCycle } | null>(null);
+  const [address, setAddress] = useState<BillingAddress>({
+    street: '',
+    city: '',
+    state: '',
+    country: 'US',
+    zipcode: '',
+  });
 
-  // Fetch current plan
   useEffect(() => {
     fetchCurrentPlan();
   }, []);
 
   const fetchCurrentPlan = async () => {
     try {
-      const response = await fetch('/api/plans/current');
-      if (response.ok) {
-        const data = await response.json();
+      const res = await fetch('/api/plans/current');
+      if (res.ok) {
+        const data = await res.json();
         setCurrentPlan(data);
       }
-    } catch (error) {
-      console.error('Error fetching current plan:', error);
+    } catch (err) {
+      console.error('Fetch plan error:', err);
     } finally {
       setIsLoadingPlan(false);
     }
   };
 
-  const handlePlanSelect = async (planType: PlanType, billingCycle: BillingCycle) => {
+  const handlePlanSelect = (planType: PlanType, billingCycle: BillingCycle) => {
     if (planType === 'free') {
-      toast.error('Free plan is automatically assigned');
+      toast.info('You are already on the Free plan.');
       return;
     }
+    setSelectedPlan({ planType, billingCycle });
+    setOpenDialog(true);
+  };
 
-    const loadingKey = `${planType}-${billingCycle}`;
-    setLoading(prev => ({ ...prev, [loadingKey]: true }));
+  const submitSubscription = async () => {
+    if (!selectedPlan) return;
+    const loadingKey = `${selectedPlan.planType}-${selectedPlan.billingCycle}`;
+    setLoading((prev) => ({ ...prev, [loadingKey]: true }));
 
     try {
-      const response = await fetch('/api/payments/create-checkout', {
+      const res = await fetch('/api/payments/create-checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          planType,
-          billingCycle,
+          ...selectedPlan,
+          billingAddress: address,
         }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || 'Something went wrong.');
+        return;
+      }
 
-      if (response.ok) {
-        // Redirect to DodoPayments checkout
+      if (data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       } else {
-        toast.error(data.error || 'Failed to create checkout session');
+        toast.error('Missing checkout URL.');
       }
-    } catch (error) {
-      console.error('Checkout error:', error);
-      toast.error('Something went wrong. Please try again.');
+    } catch (err) {
+      console.error('Plan select error:', err);
+      toast.error('Unable to process your request.');
     } finally {
-      setLoading(prev => ({ ...prev, [loadingKey]: false }));
+      setOpenDialog(false);
+      setLoading((prev) => ({ ...prev, [loadingKey]: false }));
     }
   };
 
   const isCurrentPlan = (planType: PlanType, billingCycle: BillingCycle) => {
-    return currentPlan?.plan_type === planType && 
-           currentPlan?.billing_cycle === billingCycle &&
-           currentPlan?.subscription_status === 'active';
+    return (
+      currentPlan?.plan_type === planType &&
+      currentPlan?.billing_cycle === billingCycle &&
+      currentPlan?.subscription_status === 'active'
+    );
   };
 
   const isLoading = (planType: PlanType, billingCycle: BillingCycle) => {
-    const loadingKey = `${planType}-${billingCycle}`;
-    return loading[loadingKey] || false;
+    return loading[`${planType}-${billingCycle}`] || false;
   };
 
   if (isLoadingPlan) {
@@ -98,24 +127,15 @@ export default function PricingPage() {
   return (
     <div className="py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Choose Your Plan
-          </h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Choose Your Plan</h1>
           <p className="text-xl text-gray-600 mb-8">
             Start with our free plan and upgrade as you grow
           </p>
-          
-          <PricingToggle
-            billingCycle={billingCycle} 
-            onChange={setBillingCycle} 
-          />
+          <PricingToggle billingCycle={billingCycle} onChange={setBillingCycle} />
         </div>
 
-        {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-          {/* Free Plan */}
           <PricingCard
             planType="free"
             billingCycle="monthly"
@@ -124,7 +144,6 @@ export default function PricingPage() {
             isLoading={isLoading('free', 'monthly')}
           />
 
-          {/* Growth Plan */}
           <PricingCard
             planType="growth"
             billingCycle={billingCycle}
@@ -133,7 +152,6 @@ export default function PricingPage() {
             isLoading={isLoading('growth', billingCycle)}
           />
 
-          {/* Pro Plan */}
           <PricingCard
             planType="pro"
             billingCycle={billingCycle}
@@ -143,41 +161,45 @@ export default function PricingPage() {
           />
         </div>
 
-        {/* FAQ Section */}
-        <div className="mt-24">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            Frequently Asked Questions
-          </h2>
-          
-          <div className="max-w-3xl mx-auto space-y-8">
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Can I change my plan anytime?
-              </h3>
-              <p className="text-gray-600">
-                Yes! You can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.
-              </p>
+        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Enter Billing Address</DialogTitle>
+            </DialogHeader>
+
+            <div className="grid gap-4 py-4">
+              <Input
+                placeholder="Street"
+                value={address.street}
+                onChange={(e) => setAddress((prev) => ({ ...prev, street: e.target.value }))}
+              />
+              <Input
+                placeholder="City"
+                value={address.city}
+                onChange={(e) => setAddress((prev) => ({ ...prev, city: e.target.value }))}
+              />
+              <Input
+                placeholder="State"
+                value={address.state}
+                onChange={(e) => setAddress((prev) => ({ ...prev, state: e.target.value }))}
+              />
+              <Input
+                placeholder="Country (2-letter code)"
+                value={address.country}
+                onChange={(e) => setAddress((prev) => ({ ...prev, country: e.target.value }))}
+              />
+              <Input
+                placeholder="Zipcode"
+                value={address.zipcode}
+                onChange={(e) => setAddress((prev) => ({ ...prev, zipcode: e.target.value }))}
+              />
             </div>
-            
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                What happens if I exceed my limits?
-              </h3>
-              <p className="text-gray-600">
-                If you reach your plan limits, you'll be prompted to upgrade. Your existing data remains safe and accessible.
-              </p>
-            </div>
-            
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Is there a free trial?
-              </h3>
-              <p className="text-gray-600">
-                Our free plan gives you 1,000 events per month forever. No credit card required to get started.
-              </p>
-            </div>
-          </div>
-        </div>
+
+            <DialogFooter>
+              <Button onClick={submitSubscription}>Continue to Checkout</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

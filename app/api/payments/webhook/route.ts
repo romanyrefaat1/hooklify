@@ -1,4 +1,3 @@
-// app/api/payments/webhook/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { Webhook } from 'standardwebhooks';
@@ -10,6 +9,9 @@ const supabase = createClient(
 );
 
 const webhook = new Webhook(process.env.DODO_PAYMENTS_WEBHOOK_SECRET!);
+
+// Rate limiting for webhook (optional)
+const recentWebhooks = new Set();
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,13 +26,30 @@ export async function POST(request: NextRequest) {
     // Verify webhook signature
     await webhook.verify(rawBody, webhookHeaders);
     
+    // Simple duplicate prevention
+    const webhookId = webhookHeaders["webhook-id"];
+    if (recentWebhooks.has(webhookId)) {
+      console.log('Duplicate webhook ignored:', webhookId);
+      return NextResponse.json({ received: true });
+    }
+    recentWebhooks.add(webhookId);
+    
+    // Clean up old webhook IDs (simple cleanup)
+    if (recentWebhooks.size > 1000) {
+      const oldIds = Array.from(recentWebhooks).slice(0, 500);
+      oldIds.forEach(id => recentWebhooks.delete(id));
+    }
+    
     const event = JSON.parse(rawBody);
     const { type, data } = event;
 
-    console.log(`Received webhook event: ${type}`, data);
+    console.log(`Received webhook event: ${type}`, { 
+      customerId: data?.customer?.customer_id,
+      subscriptionId: data?.subscription_id || data?.id
+    });
 
-    if (!data || !data.customer || !data.customer.email) {
-      console.error('Invalid webhook data:', data);
+    if (!data || !data.customer) {
+      console.error('Invalid webhook data: missing customer');
       return NextResponse.json({ error: 'Invalid webhook data' }, { status: 400 });
     }
 
@@ -40,7 +59,7 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'subscription.created':
-      case 'subscription.active':  // This is the actual event DodoPayments sends
+      case 'subscription.active':
       case 'subscription.activated':
         await handleSubscriptionActivated(data);
         break;
@@ -76,6 +95,46 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// Improved user resolution function
+async function resolveUserId(data: any): Promise<string | null> {
+  const { customer, metadata } = data;
+  
+  // First try metadata userId (most reliable)
+  if (metadata?.userId) {
+    return metadata.userId;
+  }
+  
+  // Then try customer reference (if it's a user ID)
+  if (customer?.reference) {
+    const { data: userData } = await supabase
+      .from('users')
+      .select('id')
+      .eq('id', customer.reference)
+      .single();
+    
+    if (userData) {
+      return userData.id;
+    }
+  }
+  
+  // Last resort: email lookup with additional verification
+  if (customer?.email && metadata?.userEmail) {
+    // Only use email if it matches the metadata email
+    if (customer.email === metadata.userEmail) {
+      const { data: userData } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', customer.email)
+        .single();
+      
+      return userData?.id || null;
+    }
+  }
+  
+  console.error('Could not resolve user ID from webhook data');
+  return null;
+}
+
 async function handleCustomerCreated(data: any) {
   const { customer } = data;
   
@@ -84,7 +143,25 @@ async function handleCustomerCreated(data: any) {
     return;
   }
 
-  // Update user with customer ID
+  // Update user with customer ID using reference (user ID)
+  if (customer.reference) {
+    const { error } = await supabase
+      .from('users')
+      .update({
+        customer_id: customer.customer_id,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', customer.reference);
+
+    if (error) {
+      console.error('Error updating customer by reference:', error);
+    } else {
+      console.log(`Customer created for user: ${customer.reference}`);
+      return;
+    }
+  }
+
+  // Fallback to email lookup
   const { error } = await supabase
     .from('users')
     .update({
@@ -94,27 +171,15 @@ async function handleCustomerCreated(data: any) {
     .eq('email', customer.email);
 
   if (error) {
-    console.error('Error updating customer:', error);
+    console.error('Error updating customer by email:', error);
   } else {
     console.log(`Customer created for email: ${customer.email}`);
   }
 }
 
 async function handleSubscriptionActivated(data: any) {
-  const { customer, metadata } = data;
-  let userId = metadata?.userId;
+  const userId = await resolveUserId(data);
   
-  // If no userId in metadata, try to find user by email
-  if (!userId && customer?.email) {
-    const { data: userData } = await supabase
-      .from('users')
-      .select('id')
-      .eq('email', customer.email)
-      .single();
-    
-    userId = userData?.id;
-  }
-
   if (!userId) {
     console.error('No userId found for subscription activation');
     return;
@@ -127,9 +192,10 @@ async function handleSubscriptionActivated(data: any) {
     return;
   }
 
-  // Calculate subscription end date based on billing cycle
+  // Calculate subscription dates
   const startDate = new Date();
   const endDate = new Date(startDate);
+  
   if (planInfo.billingCycle === 'annual') {
     endDate.setFullYear(endDate.getFullYear() + 1);
   } else {
@@ -146,7 +212,7 @@ async function handleSubscriptionActivated(data: any) {
       plan_type: planInfo.planType,
       billing_cycle: planInfo.billingCycle,
       subscription_id: data.subscription_id || data.id,
-      customer_id: customer.customer_id,
+      customer_id: data.customer.customer_id,
       events_used_this_month: 0,
       events_reset_date: startDate.toISOString(),
       updated_at: new Date().toISOString(),
@@ -161,19 +227,7 @@ async function handleSubscriptionActivated(data: any) {
 }
 
 async function handleSubscriptionCancelled(data: any) {
-  const { customer, metadata } = data;
-  let userId = metadata?.userId;
-  
-  if (!userId && customer?.email) {
-    const { data: userData } = await supabase
-      .from('users')
-      .select('id')
-      .eq('email', customer.email)
-      .single();
-    
-    userId = userData?.id;
-  }
-
+  const userId = await resolveUserId(data);
   if (!userId) return;
 
   const { error } = await supabase
@@ -193,25 +247,13 @@ async function handleSubscriptionCancelled(data: any) {
 }
 
 async function handleSubscriptionExpired(data: any) {
-  const { customer, metadata } = data;
-  let userId = metadata?.userId;
-  
-  if (!userId && customer?.email) {
-    const { data: userData } = await supabase
-      .from('users')
-      .select('id')
-      .eq('email', customer.email)
-      .single();
-    
-    userId = userData?.id;
-  }
-
+  const userId = await resolveUserId(data);
   if (!userId) return;
 
   const { error } = await supabase
     .from('users')
     .update({
-      subscription_status: 'cancelled', // Set to cancelled instead of expired
+      subscription_status: 'expired',
       plan_type: 'free',
       updated_at: new Date().toISOString(),
     })
@@ -225,19 +267,7 @@ async function handleSubscriptionExpired(data: any) {
 }
 
 async function handlePaymentFailed(data: any) {
-  const { customer, metadata } = data;
-  let userId = metadata?.userId;
-  
-  if (!userId && customer?.email) {
-    const { data: userData } = await supabase
-      .from('users')
-      .select('id')
-      .eq('email', customer.email)
-      .single();
-    
-    userId = userData?.id;
-  }
-
+  const userId = await resolveUserId(data);
   if (!userId) return;
 
   const { error } = await supabase
@@ -256,22 +286,9 @@ async function handlePaymentFailed(data: any) {
 }
 
 async function handlePaymentSucceeded(data: any) {
-  const { customer, metadata } = data;
-  let userId = metadata?.userId;
-  
-  if (!userId && customer?.email) {
-    const { data: userData } = await supabase
-      .from('users')
-      .select('id')
-      .eq('email', customer.email)
-      .single();
-    
-    userId = userData?.id;
-  }
-
+  const userId = await resolveUserId(data);
   if (!userId) return;
 
-  // Reset monthly usage if payment succeeded
   const { error } = await supabase
     .from('users')
     .update({
