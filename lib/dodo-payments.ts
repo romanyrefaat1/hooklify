@@ -7,7 +7,8 @@ import DodoPayments from 'dodopayments';
 
 // Initialize DodoPayments client
 export const dodoPayments = new DodoPayments({
-  bearerToken: process.env.DODO_PAYMENTS_API_KEY!,
+  // bearerToken: process.env['DODO_PAYMENTS_API_KEY']
+  bearerToken: "C9-qsQE38WwiuLUS.YMcrc0nqrUPtRkSvM88S3BfPQzGFKNyYT-f5EzjGaEfvs3Yv"
 });
 
 // Product configuration for Hooklify (separate products for each billing cycle)
