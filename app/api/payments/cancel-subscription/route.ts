@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { cookies } from 'next/headers';
-import { cancelSubscription } from '@/lib/dodo-payments';
+// import { cancelSubscription } from '@/lib/dodo-payments';
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Cancel subscription with DodoPayments
-    await cancelSubscription(user.subscription_id);
+    // await cancelSubscription(user.subscription_id);
 
     // Update user status
     await supabase

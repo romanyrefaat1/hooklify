@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { cookies } from 'next/headers';
-import { getCustomerSubscriptions } from '@/lib/dodo-payments';
+// import { getCustomerSubscriptions } from '@/lib/dodo-payments';
 
 export async function GET(request: NextRequest) {
   try {
@@ -28,9 +28,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Get customer subscriptions
-    const subscriptions = await getCustomerSubscriptions(user.customer_id);
+    // const subscriptions = await getCustomerSubscriptions(user.customer_id);
 
-    return NextResponse.json({ subscriptions });
+    // return NextResponse.json({ subscriptions });
 
   } catch (error) {
     console.error('Customer portal error:', error);
