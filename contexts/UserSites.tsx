@@ -16,7 +16,7 @@ const UserSitesContext = createContext<{
 }| undefined>(undefined);
 
 export default function UserSitesProvider ({children}: {children: React.ReactNode}){
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [userSites, setUserSites] = useState<Array<UserSitesRow>>([]);
     const {user, loading: userLoading, error: userError} = useUser();

@@ -4,18 +4,15 @@ import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import Sidebar from '@/components/dashboard/Sidebar';
 import Dashboard from '@/components/dashboard/Dashboard';
-import { useParams } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
+import { useUserSites } from '@/contexts/UserSites';
 
 export default function AppLayout() {
   const { siteId } = useParams();
-  useEffect(() => {
-    if (siteId) {
-      localStorage.setItem('last-active-website-id', siteId as string);
-    }
-  }, [siteId]);
-
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  const {currSite, loading, error} = useUserSites()
 
   // Listen for sidebar collapse events
   useEffect(() => {
@@ -49,6 +46,18 @@ export default function AppLayout() {
       window.removeEventListener('sidebarToggle', handleSidebarToggle as EventListener);
     };
   }, []);
+
+  useEffect(() => {
+    console.log("currSite", currSite)
+    if (siteId && currSite) {
+      localStorage.setItem('last-active-website-id', siteId as string);
+    }
+  }, [siteId, currSite]);
+
+  if (!loading && (!currSite || error)) {
+    return notFound();
+  }
+  
 
   return (
     <div className="min-h-screen bg-[var(--bg-page)] font-sans custom-scrollbar overflow-x-hidden">
