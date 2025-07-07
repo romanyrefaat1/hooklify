@@ -27,7 +27,7 @@ export default function LoginPage() {
             return;
         }
 
-        router.push("/app");
+        router.push("/app/redirect");
     };
 
     return (

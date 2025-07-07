@@ -4,8 +4,16 @@ import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import Sidebar from '@/components/dashboard/Sidebar';
 import Dashboard from '@/components/dashboard/Dashboard';
+import { useParams } from 'next/navigation';
 
 export default function AppLayout() {
+  const { siteId } = useParams();
+  useEffect(() => {
+    if (siteId) {
+      localStorage.setItem('last-active-website-id', siteId as string);
+    }
+  }, [siteId]);
+
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
