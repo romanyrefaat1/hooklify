@@ -28,7 +28,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { SiteDropdown } from './SiteDropdown';
 import { Badge } from '@/components/ui/badge';
 
-export default function Dashboard (){
+export default function Dashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [developerExpanded, setDeveloperExpanded] = useState(true);
@@ -230,9 +230,9 @@ export default function Dashboard (){
 
   const recentLogs = [
     { id: 'event_123', createdOn: '6 Jul 29, 8:20:35 pm', type: 'new_signup' },
-    { id: 'event_123', createdOn: '6 Jul 29, 8:20:35 pm', type: 'new_signup' },
-    { id: 'event_123', createdOn: '6 Jul 29, 8:20:35 pm', type: 'new_signup' },
-    { id: 'event_123', createdOn: '6 Jul 29, 8:20:35 pm', type: 'new_signup' },
+    { id: 'event_124', createdOn: '6 Jul 29, 8:15:22 pm', type: 'payment_success' },
+    { id: 'event_125', createdOn: '6 Jul 29, 8:10:15 pm', type: 'user_login' },
+    { id: 'event_126', createdOn: '6 Jul 29, 8:05:08 pm', type: 'new_signup' },
   ];
 
   const getStatusIcon = (status: string) => {
@@ -244,16 +244,16 @@ export default function Dashboard (){
 
   const getStatusBadge = (status: string, estimatedTime?: string | null) => {
     if (status === 'completed') {
-      return <Badge className="bg-green-100 text-green-700 hover:bg-green-100">Completed</Badge>;
+      return <Badge className="bg-green-100 text-green-700 hover:bg-green-100 font-medium">Completed</Badge>;
     }
     if (estimatedTime) {
-      return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">{estimatedTime}</Badge>;
+      return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 font-medium">{estimatedTime}</Badge>;
     }
-    return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100">Pending</Badge>;
+    return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100 font-medium">Pending</Badge>;
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-page)] font-inter custom-scrollbar overflow-x-hidden">
+    <div className="min-h-screen bg-[var(--bg-page)] font-sans custom-scrollbar overflow-x-hidden">
       {/* Mobile Menu Overlay */}
       <div 
         ref={overlayRef}
@@ -268,7 +268,7 @@ export default function Dashboard (){
       >
         <div className="p-6">
           <div className="flex items-center justify-between mb-8">
-            <h1 className="text-2xl font-bold text-[var(--color-primary)]">Hooklify</h1>
+            <h1 className="text-2xl font-bold text-[var(--color-primary)] font-display">Hooklify</h1>
             <button 
               onClick={toggleMobileMenu} 
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -335,7 +335,7 @@ export default function Dashboard (){
         <div className="p-6 h-full flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between mb-8 flex-shrink-0">
-            <h1 className={`text-2xl font-bold text-[var(--color-primary)] transition-opacity duration-200 ${sidebarCollapsed ? 'sidebar-text opacity-0' : ''}`}>
+            <h1 className={`text-2xl font-bold text-[var(--color-primary)] font-display transition-opacity duration-200 ${sidebarCollapsed ? 'sidebar-text opacity-0' : ''}`}>
               {!sidebarCollapsed && 'Hooklify'}
             </h1>
             <button 
@@ -433,7 +433,7 @@ export default function Dashboard (){
           <button onClick={toggleMobileMenu} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
             <Menu size={16} />
           </button>
-          <h1 className="text-xl font-bold text-[var(--color-primary)]">Hooklify</h1>
+          <h1 className="text-xl font-bold text-[var(--color-primary)] font-display">Hooklify</h1>
         </div>
 
         {/* Page Content */}
@@ -443,20 +443,20 @@ export default function Dashboard (){
             <div className="mb-12 fade-in">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
                 <div>
-                  <h1 className="text-3xl lg:text-4xl font-bold text-[var(--text-primary)] mb-2" style={{ fontFamily: 'Merriweather, serif' }}>
+                  <h1 className="text-3xl lg:text-4xl font-bold text-[var(--text-primary)] mb-2 font-display tracking-tight">
                     Hello Developer,
                   </h1>
-                  <p className="text-xl text-[var(--text-primary)] mb-1" style={{ fontFamily: 'Merriweather, serif' }}>
+                  <p className="text-xl text-[var(--text-primary)] mb-1 font-display font-medium">
                     Let's get you set up for webhook success!
                   </p>
-                  <div className="flex items-center gap-2 text-[var(--text-secondary)] text-sm">
+                  <div className="flex items-center gap-2 text-[var(--text-secondary)] text-sm font-medium">
                     <User size={16} />
                     <span>Welcome back to your dashboard</span>
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-4">
-                  <Badge className="bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)] text-sm px-4 py-2">
+                  <Badge className="bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)] text-sm px-4 py-2 font-medium">
                     {completedTasks}/{totalTasks} steps completed
                   </Badge>
                 </div>
@@ -502,7 +502,7 @@ export default function Dashboard (){
                         
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 mb-2">
-                            <h3 className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-[var(--color-primary-dark)] transition-colors">
+                            <h3 className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-[var(--color-primary-dark)] transition-colors font-display">
                               {task.title}
                             </h3>
                             {getStatusIcon(task.status)}
@@ -514,7 +514,7 @@ export default function Dashboard (){
                           
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <span className="text-xs text-[var(--text-muted)] font-medium">
+                              <span className="text-xs text-[var(--text-muted)] font-medium uppercase tracking-wider">
                                 {task.steps}
                               </span>
                               {getStatusBadge(task.status, task.estimatedTime)}
@@ -537,7 +537,7 @@ export default function Dashboard (){
 
             {/* Recent Logs */}
             <div className="fade-in">
-              <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6" style={{ fontFamily: 'Merriweather, serif' }}>
+              <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 font-display tracking-tight">
                 Your recent logs
               </h2>
               
@@ -546,16 +546,18 @@ export default function Dashboard (){
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-gray-200">
-                        <th className="text-left py-4 px-4 font-semibold text-[var(--text-primary)]">ID</th>
-                        <th className="text-left py-4 px-4 font-semibold text-[var(--text-primary)]">Created On</th>
-                        <th className="text-left py-4 px-4 font-semibold text-[var(--text-primary)]">Type</th>
+                        <th className="text-left py-4 px-4 font-semibold text-[var(--text-primary)] text-sm uppercase tracking-wider">ID</th>
+                        <th className="text-left py-4 px-4 font-semibold text-[var(--text-primary)] text-sm uppercase tracking-wider">Created On</th>
+                        <th className="text-left py-4 px-4 font-semibold text-[var(--text-primary)] text-sm uppercase tracking-wider">Type</th>
                       </tr>
                     </thead>
                     <tbody>
                       {recentLogs.map((log, index) => (
                         <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                          <td className="py-4 px-4 text-[var(--text-secondary)]">{log.id}</td>
-                          <td className="py-4 px-4 text-[var(--text-secondary)]">{log.createdOn}</td>
+                          <td className="py-4 px-4 text-[var(--text-secondary)] font-mono text-sm">{log.id}</td>
+                          <td className="py-4 px-4 text-[var(--text-
+secondary)] font-mono text-sm">{log.id}</td>
+                          <td className="py-4 px-4 text-[var(--text-secondary)] text-sm">{log.createdOn}</td>
                           <td className="py-4 px-4">
                             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--color-primary-muted)] text-[var(--color-primary-dark)]">
                               {log.type}

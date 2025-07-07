@@ -1,17 +1,41 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
 @layer base {
   * {
     @apply border-[--color-border] outline-[--color-primary-dark]/50;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+  
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
     background-color: var(--bg-page);
     color: var(--text-primary);
+    line-height: 1.6;
+    letter-spacing: 0.015em;
   }
+  
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Merriweather', serif;
+    font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+  }
+  
+  p {
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+  }
+  
+  button {
+    font-weight: 500;
+    letter-spacing: 0.025em;
   }
 }
 
@@ -52,6 +76,8 @@
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
   transition: background 0.2s ease;
+  font-weight: 500;
+  letter-spacing: 0.025em;
 }
 .button:hover {
   background: var(--color-primary-light);
@@ -90,4 +116,46 @@
 .toast .text-xs {
   font-size: 0.75rem;
   color: var(--text-secondary);
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Hooklify card styling */
+.hooklify-card {
+  @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
+}
+
+/* Sidebar animations */
+.sidebar-item {
+  @apply flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 transition-all duration-200 cursor-pointer hover:bg-amber-50 hover:text-amber-800;
+}
+
+.sidebar-item.active {
+  @apply bg-amber-100 text-amber-900 font-medium;
+}
+
+/* Typography utilities */
+.font-display {
+  font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', Monaco, Consolas, monospace;
 }

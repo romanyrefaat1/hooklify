@@ -24,10 +24,8 @@ module.exports = {
           primaryLight: "#FBBF24",
           primaryDark: "#B45309",
           primaryMuted: "#FEF3C7",
-
           secondary: "#3B82F6",
           secondaryMuted: "#DBEAFE",
-
           success: "#10B981",
           successMuted: "#D1FAE5",
           warning: "#FBBF24",
@@ -42,8 +40,31 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ["Inter", ...defaultTheme.fontFamily.sans],
-        serif: ["Merriweather", ...defaultTheme.fontFamily.serif]
+        // Primary sans-serif stack - clean and modern
+        sans: ["Inter", "SF Pro Display", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Arial", "sans-serif"],
+        // Secondary sans-serif for headings - more personality
+        display: ["Poppins", "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+        // Monospace for code
+        mono: ["JetBrains Mono", "Fira Code", "Monaco", "Consolas", "monospace"]
+      },
+      fontSize: {
+        xs: ["0.75rem", { lineHeight: "1.5", letterSpacing: "0.025em" }],
+        sm: ["0.875rem", { lineHeight: "1.5", letterSpacing: "0.025em" }],
+        base: ["1rem", { lineHeight: "1.6", letterSpacing: "0.015em" }],
+        lg: ["1.125rem", { lineHeight: "1.6", letterSpacing: "0.015em" }],
+        xl: ["1.25rem", { lineHeight: "1.5", letterSpacing: "0.01em" }],
+        "2xl": ["1.5rem", { lineHeight: "1.4", letterSpacing: "0.005em" }],
+        "3xl": ["1.875rem", { lineHeight: "1.3", letterSpacing: "-0.015em" }],
+        "4xl": ["2.25rem", { lineHeight: "1.2", letterSpacing: "-0.025em" }],
+        "5xl": ["3rem", { lineHeight: "1.1", letterSpacing: "-0.035em" }]
+      },
+      fontWeight: {
+        light: "300",
+        normal: "400",
+        medium: "500",
+        semibold: "600",
+        bold: "700",
+        extrabold: "800"
       },
       borderRadius: {
         button: "0.5rem",
@@ -54,15 +75,6 @@ module.exports = {
         sm: "0 1px 2px rgba(0, 0, 0, 0.05)",
         md: "0 4px 6px rgba(0, 0, 0, 0.1)",
         lg: "0 10px 15px rgba(0, 0, 0, 0.1)"
-      },
-      fontSize: {
-        xs: "0.75rem",
-        sm: "0.875rem",
-        base: "1rem",
-        lg: "1.125rem",
-        xl: "1.25rem",
-        "2xl": "1.5rem",
-        "3xl": "1.875rem"
       },
       spacing: {
         1: "0.25rem",
