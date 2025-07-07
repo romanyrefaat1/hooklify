@@ -2,6 +2,7 @@
 
 import { useUserSites } from "@/contexts/UserSites";
 import normalizeMessageInEvents from "@/lib/helpers/normalize-message-in-events";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -17,7 +18,7 @@ interface DashboardRecentLogsProps {
 }
 
 export default function DashboardRecentLogs() {
-  const {sites, loading, error, currSite} = useUserSites()
+  const {loading, error, currSite} = useUserSites()
   
   const totalEvents = currSite?.events?.length || 0;
   const displayedEvents = Math.min(6, totalEvents);
@@ -40,7 +41,16 @@ export default function DashboardRecentLogs() {
               </tr>
             </thead>
             <tbody>
-              {currSite?.events?.length === 0 && (
+              {loading && Array.from({ length: 6 }).map((_, idx) => (
+                <tr key={idx}>
+                  {Array.from({ length: 5 }).map((_, tdIdx) => (
+                    <td key={tdIdx} className="py-4 px-4">
+                      <Skeleton className="h-4 w-full bg-gray-200" />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+              {currSite?.events?.length === 0 && !loading && (
                 <tr>
                   <td colSpan={5} className="py-4 px-4 text-text-secondary font-mono text-center text-sm">No events found</td>
                 </tr>

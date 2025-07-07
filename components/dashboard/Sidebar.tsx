@@ -36,6 +36,8 @@ interface SidebarProps {
 
 export default function Sidebar({ onToggle }: SidebarProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [developerExpanded, setDeveloperExpanded] = useState(true);
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -47,6 +49,8 @@ export default function Sidebar({ onToggle }: SidebarProps) {
   const currentPathSegment = pathSegments[2];
 
   const {currSite, loading, error} = useUserSites()
+
+
   
   console.log("Current Path Segment: ", currentPathSegment);
 
@@ -210,6 +214,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
               <div key={index} className={`sidebar-item ${item.active ? 'active' : ''}`}>
                 {loading || !currSite ? (
                   <span className="flex items-center gap-2 opacity-50 cursor-not-allowed">
+                    {/* {currSite} */}
                     <item.icon size={20} />
                     <span className="font-medium">{item.label}</span>
                   </span>

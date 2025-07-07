@@ -6,6 +6,7 @@ import Sidebar from '@/components/dashboard/Sidebar';
 import Dashboard from '@/components/dashboard/Dashboard';
 import { notFound, useParams } from 'next/navigation';
 import { useUserSites } from '@/contexts/UserSites';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function AppLayout() {
   const { siteId } = useParams();
@@ -13,51 +14,93 @@ export default function AppLayout() {
   const contentRef = useRef<HTMLDivElement>(null);
 
   const {currSite, loading, error} = useUserSites()
+  const isMobile = useIsMobile()
+  
+  // Check if screen is medium or smaller (we want GSAP only on large screens)
+  const isSmallOrMediumScreen = isMobile || (typeof window !== 'undefined' && window.innerWidth < 1024)
+
+  console.log('🔍 AppLayout render - isMobile:', isMobile, 'isSmallOrMediumScreen:', isSmallOrMediumScreen, 'sidebarCollapsed:', sidebarCollapsed)
 
   // Listen for sidebar collapse events
   useEffect(() => {
+    console.log('🔧 useEffect triggered - isMobile:', isMobile, 'isSmallOrMediumScreen:', isSmallOrMediumScreen, 'contentRef:', !!contentRef.current)
+    
     const handleSidebarToggle = (event: CustomEvent) => {
+      console.log('📱 Sidebar toggle event received:', event.detail)
       const isCollapsed = event.detail.collapsed;
       setSidebarCollapsed(isCollapsed);
       
       const content = contentRef.current;
+      console.log('📱 Content element exists:', !!content, 'isSmallOrMediumScreen:', isSmallOrMediumScreen)
       if (!content) return;
 
-      // Animate content margin based on sidebar state
-      gsap.to(content, {
-        marginLeft: isCollapsed ? '5rem' : '17rem', // 4rem sidebar + 1rem gap when collapsed, 16rem sidebar + 1rem gap when expanded
-        duration: 0.3,
-        ease: 'power2.out',
-      });
+      // Only animate content margin on large screens (desktop)
+      if (!isSmallOrMediumScreen) {
+        console.log('🎬 Running GSAP animation - marginLeft:', isCollapsed ? '5rem' : '17rem')
+        gsap.to(content, {
+          marginLeft: isCollapsed ? '5rem' : '12rem', // 4rem sidebar + 1rem gap when collapsed, 16rem sidebar + 1rem gap when expanded
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      } else {
+        console.log('❌ Skipping GSAP animation on small/medium screens')
+      }
     };
 
-    // Listen for custom sidebar toggle events
-    window.addEventListener('sidebarToggle', handleSidebarToggle as EventListener);
-    
-    // Set initial margin based on default sidebar state
-    const content = contentRef.current;
-    if (content) {
-      gsap.set(content, {
-        marginLeft: '17rem', // Default expanded state
-      });
+    // Only set up GSAP animations on large screens
+    if (!isSmallOrMediumScreen) {
+      console.log('🖥️ Setting up GSAP for large screens')
+      // Listen for custom sidebar toggle events
+      window.addEventListener('sidebarToggle', handleSidebarToggle as EventListener);
+      
+      // Set initial margin based on default sidebar state
+      const content = contentRef.current;
+      if (content) {
+        console.log('🎯 Setting initial GSAP margin to 17rem')
+        gsap.set(content, {
+          marginLeft: '17rem', // Default expanded state
+        });
+      } else {
+        console.log('❌ Content element not found for initial GSAP setup')
+      }
+    } else {
+      console.log('📱 Small/Medium screen detected - clearing GSAP styles and skipping setup')
+      // Clear any existing GSAP styles on small/medium screens
+      const content = contentRef.current;
+      if (content) {
+        console.log('🧹 Clearing GSAP marginLeft properties')
+        gsap.set(content, {
+          clearProps: 'marginLeft'
+        });
+      } else {
+        console.log('❌ Content element not found for GSAP cleanup')
+      }
     }
 
     return () => {
-      window.removeEventListener('sidebarToggle', handleSidebarToggle as EventListener);
+      if (!isSmallOrMediumScreen) {
+        console.log('🧼 Cleanup: removing event listener')
+        window.removeEventListener('sidebarToggle', handleSidebarToggle as EventListener);
+      } else {
+        console.log('📱 Cleanup: no event listener to remove (small/medium screen)')
+      }
     };
-  }, []);
+  }, [isMobile, isSmallOrMediumScreen]); // Add both to dependency array
 
   useEffect(() => {
-    console.log("currSite", currSite)
+    console.log("💾 Site storage effect - currSite:", currSite, "siteId:", siteId)
     if (siteId && currSite) {
+      console.log("💾 Storing last active website ID:", siteId)
       localStorage.setItem('last-active-website-id', siteId as string);
     }
   }, [siteId, currSite]);
 
   if (!loading && (!currSite || error)) {
+    console.log("🚫 Returning notFound - loading:", loading, "currSite:", !!currSite, "error:", error)
     return notFound();
   }
   
+  console.log("🎨 Rendering AppLayout - isMobile:", isMobile, "isSmallOrMediumScreen:", isSmallOrMediumScreen)
 
   return (
     <div className="min-h-screen bg-[var(--bg-page)] font-sans custom-scrollbar overflow-x-hidden">
