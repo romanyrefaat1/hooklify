@@ -13,7 +13,7 @@ export default async function AppPage (){
 
     return (
         <div>
-            App Page
+            {/* App Page */}
             <Dashboard />
         </div>
     )
