@@ -3,41 +3,28 @@
 import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { 
-  Home, 
   Globe, 
   Calendar, 
   Code, 
   Book, 
   Key, 
   Settings, 
-  ChevronDown, 
-  ChevronRight,
-  Menu,
-  X,
-  User,
-  Plus,
   CheckCircle2,
   Clock,
-  ArrowRight,
+  Webhook,
   Zap,
   Database,
-  Webhook
+  Home,
+  X
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { SiteDropdown } from './SiteDropdown';
 import { Badge } from '@/components/ui/badge';
+import DashboardRecentLogs from "./DashboardRecentLogs"
+import DashboardHeader from './DashboardHeader';
+import DashboardSetupTasks from './DashboardSetupTasks';
 
 export default function Dashboard() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [developerExpanded, setDeveloperExpanded] = useState(true);
-  const [missOutExpanded, setMissOutExpanded] = useState(true);
-  const sidebarRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const developerContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Initial animations
@@ -49,141 +36,6 @@ export default function Dashboard() {
       ease: "power2.out"
     });
   }, []);
-
-  const toggleSidebar = () => {
-    const sidebar = sidebarRef.current;
-    const content = contentRef.current;
-    
-    if (!sidebar || !content) return;
-
-    if (sidebarCollapsed) {
-      // Expand sidebar
-      gsap.to(sidebar, {
-        width: '16rem',
-        duration: 0.3,
-        ease: "power2.out"
-      });
-      gsap.to('.sidebar-text', {
-        opacity: 1,
-        duration: 0.2,
-        delay: 0.1
-      });
-      gsap.to(content, {
-        marginLeft: '17rem',
-        duration: 0.3,
-        ease: "power2.out"
-      });
-    } else {
-      // Collapse sidebar
-      gsap.to('.sidebar-text', {
-        opacity: 0,
-        duration: 0.1
-      });
-      gsap.to(sidebar, {
-        width: '4rem',
-        duration: 0.3,
-        ease: "power2.out"
-      });
-      gsap.to(content, {
-        marginLeft: '5rem',
-        duration: 0.3,
-        ease: "power2.out"
-      });
-    }
-    
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
-
-  const toggleDeveloperSection = () => {
-    if (sidebarCollapsed) return;
-    
-    const content = developerContentRef.current;
-    if (!content) return;
-
-    if (developerExpanded) {
-      // Collapse
-      gsap.to(content, {
-        height: 0,
-        opacity: 0,
-        duration: 0.3,
-        ease: "power2.out"
-      });
-    } else {
-      // Expand
-      gsap.set(content, { height: 'auto' });
-      const height = content.offsetHeight;
-      gsap.set(content, { height: 0, opacity: 0 });
-      gsap.to(content, {
-        height: height,
-        opacity: 1,
-        duration: 0.3,
-        ease: "power2.out"
-      });
-    }
-    
-    setDeveloperExpanded(!developerExpanded);
-  };
-
-  const toggleMobileMenu = () => {
-    const menu = mobileMenuRef.current;
-    const overlay = overlayRef.current;
-    
-    if (!menu || !overlay) return;
-
-    if (mobileMenuOpen) {
-      // Close menu
-      gsap.to(overlay, {
-        opacity: 0,
-        backdropFilter: 'blur(0px)',
-        duration: 0.3,
-        ease: "power2.out"
-      });
-      gsap.to(menu, {
-        x: '-100%',
-        duration: 0.4,
-        ease: "power2.out",
-        onComplete: () => {
-          overlay.style.pointerEvents = 'none';
-        }
-      });
-    } else {
-      // Open menu
-      overlay.style.pointerEvents = 'auto';
-      gsap.to(overlay, {
-        opacity: 1,
-        backdropFilter: 'blur(8px)',
-        duration: 0.3,
-        ease: "power2.out"
-      });
-      gsap.to(menu, {
-        x: '0%',
-        duration: 0.4,
-        ease: "power2.out"
-      });
-    }
-    
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
-
-  // Close mobile menu when clicking overlay
-  const handleOverlayClick = () => {
-    if (mobileMenuOpen) {
-      toggleMobileMenu();
-    }
-  };
-
-  const sidebarItems = [
-    { icon: Home, label: 'Get started', active: true },
-    { icon: Globe, label: 'Websites' },
-    { icon: Calendar, label: 'Events' },
-    { icon: Calendar, label: 'Events' },
-  ];
-
-  const developerItems = [
-    { icon: Book, label: 'Documentation' },
-    { icon: Key, label: 'API Keys' },
-    { icon: Settings, label: 'Settings' },
-  ];
 
   const setupTasks = [
     {
@@ -253,326 +105,80 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-page)] font-sans custom-scrollbar overflow-x-hidden">
-      {/* Mobile Menu Overlay */}
-      <div 
-        ref={overlayRef}
-        className="fixed inset-0 bg-black/30 z-40 lg:hidden opacity-0 pointer-events-none backdrop-blur-0"
-        onClick={handleOverlayClick}
-      />
-
-      {/* Mobile Menu */}
-      <div 
-        ref={mobileMenuRef}
-        className="fixed left-0 top-0 h-full w-64 bg-[var(--bg-surface)] z-50 lg:hidden transform -translate-x-full rounded-r-3xl shadow-2xl custom-scrollbar"
-      >
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-8">
-            <h1 className="text-2xl font-bold text-[var(--color-primary)] font-display">Hooklify</h1>
-            <button 
-              onClick={toggleMobileMenu} 
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <X size={20} />
-            </button>
-          </div>
-          
-          <nav className="space-y-2">
-            {sidebarItems.map((item, index) => (
-              <div key={index} className={`sidebar-item ${item.active ? 'active' : ''}`}>
-                <item.icon size={20} />
-                <span className="font-medium">{item.label}</span>
-              </div>
-            ))}
-            
-            <div className="pt-4">
-              <div 
-                className="flex items-center justify-between sidebar-item"
-                onClick={() => setDeveloperExpanded(!developerExpanded)}
-              >
-                <div className="flex items-center gap-3">
-                  <Code size={20} />
-                  <span className="font-medium">Developer</span>
-                </div>
-                {developerExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-              </div>
-              
-              {developerExpanded && (
-                <div className="ml-6 mt-2 space-y-2">
-                  {developerItems.map((item, index) => (
-                    <div key={index} className="sidebar-item">
-                      <item.icon size={18} />
-                      <span>{item.label}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </nav>
-          
-          <div className="absolute bottom-6 left-6 right-6">
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-              <div className="w-8 h-8 bg-[var(--color-primary)] rounded-full flex items-center justify-center">
-                <User size={16} className="text-white" />
-              </div>
-              <span className="font-medium text-sm flex-1">Site Name</span>
-              <div className="flex items-center gap-2">
-                <button className="p-1 hover:bg-gray-200 rounded transition-colors">
-                  <Plus size={14} />
-                </button>
-                <SiteDropdown />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop Sidebar */}
-      <div 
-        ref={sidebarRef}
-        className="hidden lg:block fixed left-4 top-4 bottom-4 w-64 bg-[var(--bg-surface)] rounded-3xl shadow-lg z-30 overflow-hidden custom-scrollbar"
-      >
-        <div className="p-6 h-full flex flex-col">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8 flex-shrink-0">
-            <h1 className={`text-2xl font-bold text-[var(--color-primary)] font-display transition-opacity duration-200 ${sidebarCollapsed ? 'sidebar-text opacity-0' : ''}`}>
-              {!sidebarCollapsed && 'Hooklify'}
-            </h1>
-            <button 
-              onClick={toggleSidebar}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
-            >
-              <Menu size={20} />
-            </button>
-          </div>
-          
-          {/* Navigation */}
-          <nav className="space-y-2 mb-8 flex-1">
-            {sidebarItems.map((item, index) => (
-              <div 
-                key={index} 
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[var(--text-secondary)] transition-all duration-200 cursor-pointer ${
-                  item.active 
-                    ? 'bg-[var(--color-primary-muted)] text-[var(--color-primary-dark)] font-medium' 
-                    : 'hover:bg-[var(--color-primary-muted)]/90 hover:text-[var(--color-primary-dark)]'
-                } ${sidebarCollapsed ? 'justify-center' : ''}`}
-              >
-                <item.icon size={20} className="flex-shrink-0" />
-                <span className={`font-medium sidebar-text transition-opacity duration-200 ${sidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'}`}>
-                  {item.label}
-                </span>
-              </div>
-            ))}
-            
-            {/* Developer Section */}
-            <div className="pt-4">
-              <div 
-                className={`flex items-center justify-between px-3 py-2 rounded-lg text-[var(--text-secondary)] transition-all duration-200 cursor-pointer hover:bg-[var(--color-primary-muted)]/90 hover:text-[var(--color-primary-dark)] ${sidebarCollapsed ? 'justify-center' : ''}`}
-                onClick={toggleDeveloperSection}
-              >
-                <div className="flex items-center gap-3">
-                  <Code size={20} className="flex-shrink-0" />
-                  <span className={`font-medium sidebar-text transition-opacity duration-200 ${sidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'}`}>
-                    Developer
-                  </span>
-                </div>
-                {!sidebarCollapsed && (
-                  <div className="sidebar-text transition-opacity duration-200">
-                    {developerExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                  </div>
-                )}
-              </div>
-              
-              <div 
-                ref={developerContentRef}
-                className={`ml-6 mt-2 space-y-2 overflow-hidden ${sidebarCollapsed ? 'hidden' : ''}`}
-                style={{ height: developerExpanded ? 'auto' : '0' }}
-              >
-                {developerItems.map((item, index) => (
-                  <div 
-                    key={index} 
-                    className="flex items-center gap-3 px-3 py-2 rounded-lg text-[var(--text-secondary)] transition-all duration-200 cursor-pointer hover:bg-[var(--color-primary-muted)]/90 hover:text-[var(--color-primary-dark)]"
-                  >
-                    <item.icon size={18} className="flex-shrink-0" />
-                    <span>{item.label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </nav>
-          
-          {/* Site Name */}
-          <div className="flex-shrink-0">
-            <div className={`flex items-center gap-3 p-3 bg-gray-50 rounded-lg ${sidebarCollapsed ? 'justify-center' : ''}`}>
-              <div className="w-8 h-8 bg-[var(--color-primary)] rounded-full flex items-center justify-center flex-shrink-0">
-                <User size={16} className="text-white" />
-              </div>
-              <span className={`font-medium text-sm sidebar-text transition-opacity duration-200 flex-1 ${sidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'}`}>
-                Site Name
-              </span>
-              {!sidebarCollapsed && (
-                <div className="flex items-center gap-2 sidebar-text transition-opacity duration-200">
-                  <button className="p-1 hover:bg-gray-200 rounded transition-colors">
-                    <Plus size={14} />
-                  </button>
-                  <SiteDropdown />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <div className="w-full bg-[var(--bg-page)] font-sans custom-scrollbar">
       {/* Main Content */}
-      <div 
-        ref={contentRef}
-        className="lg:ml-72 min-h-screen transition-all duration-300"
-      >
-        {/* Mobile Header */}
-        <div className="lg:hidden flex items-center gap-3 p-4 bg-[var(--bg-surface)] border-b">
-          <button onClick={toggleMobileMenu} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
-            <Menu size={16} />
-          </button>
-          <h1 className="text-xl font-bold text-[var(--color-primary)] font-display">Hooklify</h1>
-        </div>
+      <div ref={contentRef} className="container ml-8">
+        <DashboardHeader 
+          completedTasks={completedTasks} 
+          totalTasks={totalTasks} 
+          progressPercentage={progressPercentage} 
+        />
 
-        {/* Page Content */}
-        <div className="p-4 lg:p-8 custom-scrollbar">
-          <div className="max-w-6xl mx-auto">
-            {/* Header Section */}
-            <div className="mb-12 fade-in">
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
-                <div>
-                  <h1 className="text-3xl lg:text-4xl font-bold text-[var(--text-primary)] mb-2 font-display tracking-tight">
-                    Hello Developer,
-                  </h1>
-                  <p className="text-xl text-[var(--text-primary)] mb-1 font-display font-medium">
-                    Let's get you set up for webhook success!
-                  </p>
-                  <div className="flex items-center gap-2 text-[var(--text-secondary)] text-sm font-medium">
-                    <User size={16} />
-                    <span>Welcome back to your dashboard</span>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-4">
-                  <Badge className="bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)] text-sm px-4 py-2 font-medium">
-                    {completedTasks}/{totalTasks} steps completed
-                  </Badge>
-                </div>
-              </div>
+        <main className="mt-8">
+          {/* Quick Stats */}
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="fade-in bg-[var(--bg-surface)] border-none shadow-sm">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-[var(--text-secondary)]">Total Webhooks</CardTitle>
+                <Webhook className="h-4 w-4 text-[var(--text-secondary)]" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-[var(--text-primary)]">12,345</div>
+                <p className="text-xs text-[var(--text-tertiary)]">+20.1% from last month</p>
+              </CardContent>
+            </Card>
+            <Card className="fade-in bg-[var(--bg-surface)] border-none shadow-sm">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-[var(--text-secondary)]">Successful Events</CardTitle>
+                <CheckCircle2 className="h-4 w-4 text-green-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-[var(--text-primary)]">11,987</div>
+                <p className="text-xs text-[var(--text-tertiary)]">97.1% success rate</p>
+              </CardContent>
+            </Card>
+            <Card className="fade-in bg-[var(--bg-surface)] border-none shadow-sm">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-[var(--text-secondary)]">Failed Events</CardTitle>
+                <X size={16} className="h-4 w-4 text-red-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-[var(--text-primary)]">358</div>
+                <p className="text-xs text-[var(--text-tertiary)]">2.9% failure rate</p>
+              </CardContent>
+            </Card>
+            <Card className="fade-in bg-[var(--bg-surface)] border-none shadow-sm">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-[var(--text-secondary)]">Avg. Delivery Time</CardTitle>
+                <Clock className="h-4 w-4 text-[var(--text-secondary)]" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-[var(--text-primary)]">250ms</div>
+                <p className="text-xs text-[var(--text-tertiary)]">-10ms from yesterday</p>
+              </CardContent>
+            </Card>
+          </div> */}
 
-              {/* Progress Bar */}
-              <div className="w-full bg-gray-200 rounded-full h-2 mb-8">
-                <div 
-                  className="bg-[var(--color-primary)] h-2 rounded-full transition-all duration-500 ease-out"
-                  style={{ width: `${progressPercentage}%` }}
-                ></div>
-              </div>
-            </div>
-
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols3 gap-8">
             {/* Setup Tasks */}
-            <div className="mb-12 fade-in">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {setupTasks.map((task, index) => (
-                  <Card 
-                    key={task.id} 
-                    className={`group hover:shadow-md transition-all duration-200 cursor-pointer border ${
-                      task.status === 'completed' 
-                        ? 'border-green-200 bg-green-50/50' 
-                        : 'border-gray-200 hover:border-[var(--color-primary)]/30'
-                    }`}
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                          task.status === 'completed' 
-                            ? 'bg-green-100' 
-                            : 'bg-[var(--color-primary-muted)]'
-                        }`}>
-                          <task.icon 
-                            size={20} 
-                            className={
-                              task.status === 'completed' 
-                                ? 'text-green-600' 
-                                : 'text-[var(--color-primary-dark)]'
-                            } 
-                          />
-                        </div>
-                        
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2 mb-2">
-                            <h3 className="font-semibold text-[var(--text-primary)] text-lg group-hover:text-[var(--color-primary-dark)] transition-colors font-display">
-                              {task.title}
-                            </h3>
-                            {getStatusIcon(task.status)}
-                          </div>
-                          
-                          <p className="text-[var(--text-secondary)] text-sm mb-4 leading-relaxed">
-                            {task.description}
-                          </p>
-                          
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <span className="text-xs text-[var(--text-muted)] font-medium uppercase tracking-wider">
-                                {task.steps}
-                              </span>
-                              {getStatusBadge(task.status, task.estimatedTime)}
-                            </div>
-                            
-                            {task.status === 'pending' && (
-                              <ArrowRight 
-                                size={16} 
-                                className="text-[var(--color-primary)] group-hover:translate-x-1 transition-transform" 
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
+            {/* <div className="lg:col-span-2">
+              <DashboardSetupTasks 
+                setupTasks={setupTasks} 
+                completedTasks={completedTasks} 
+                totalTasks={totalTasks} 
+                progressPercentage={progressPercentage} 
+                getStatusIcon={getStatusIcon} 
+                getStatusBadge={getStatusBadge} 
+              />
+            </div> */}
 
             {/* Recent Logs */}
-            <div className="fade-in">
-              <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-6 font-display tracking-tight">
-                Your recent logs
-              </h2>
-              
-              <div className="hooklify-card">
-                <div className="overflow-x-auto custom-scrollbar">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-gray-200">
-                        <th className="text-left py-4 px-4 font-semibold text-[var(--text-primary)] text-sm uppercase tracking-wider">ID</th>
-                        <th className="text-left py-4 px-4 font-semibold text-[var(--text-primary)] text-sm uppercase tracking-wider">Created On</th>
-                        <th className="text-left py-4 px-4 font-semibold text-[var(--text-primary)] text-sm uppercase tracking-wider">Type</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {recentLogs.map((log, index) => (
-                        <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                          <td className="py-4 px-4 text-[var(--text-secondary)] font-mono text-sm">{log.id}</td>
-                          <td className="py-4 px-4 text-[var(--text-
-secondary)] font-mono text-sm">{log.id}</td>
-                          <td className="py-4 px-4 text-[var(--text-secondary)] text-sm">{log.createdOn}</td>
-                          <td className="py-4 px-4">
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--color-primary-muted)] text-[var(--color-primary-dark)]">
-                              {log.type}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+            <div>
+              <DashboardRecentLogs recentLogs={recentLogs} />
             </div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
-};
+}

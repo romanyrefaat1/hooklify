@@ -1,89 +1,104 @@
 "use client"
 
 import { supabase } from "@/lib/supabase/client";
-import { createContext, useContext, useEffect, useState } from "react";
-
-type User = {
-    id: string
-    email: string
-} | null
+import { UserRow } from "@/types/supabase-schemas";
+import { createContext, useContext, useEffect, useState } from "react"
 
 const AuthContext = createContext<{
-    user: User
-    loading: boolean
-    isSignedIn: boolean;
-}>({
-    user: null,
-    loading: true,
-    isSignedIn: false,
-})
+  user: UserRow | null;
+  loading: boolean;
+  error: Error | null;
+  isSignedIn: boolean;
+} | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<User>(null)
-    const [loading, setLoading] = useState(true)
-    const isSignedIn = user !== null;
+  const [userRow, setUserRow] = useState<UserRow | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  const isSignedIn = userRow !== null;
 
-    useEffect(() => {
-        const getCurrentUser = async () => {
-            try {
-                const {
-                    data: { user: authUser },
-                } = await supabase.auth.getUser()
-
-                if (authUser) {
-
-                    // Get user with user.id === authUser.id
-                    const { data: user } = await supabase.from('users').select().eq('id', authUser.id).single()
-                    
-                    setUser({
-                        id: authUser.id,
-                        email: authUser.email!,
-                    })
-                } else {
-                    setUser(null)
-                }
-            } catch (error) {
-                console.error('Error getting user:', error)
-                setUser(null)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        getCurrentUser()
-
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      try {
         const {
-            data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            if (session?.user) {
-                setUser({
-                    id: session.user.id, // This is now the same as users.id
-                    email: session.user.email!,
-                })
-            } else {
-                setUser(null)
-            }
-            setLoading(false)
-        })
+          data: { user: authUser },
+          error: authError,
+        } = await supabase.auth.getUser();
 
-        return () => {
-            subscription.unsubscribe()
+        if (authError) throw authError;
+
+        if (authUser) {
+          const { data: userData, error: userError } = await supabase
+            .from("users")
+            .select("*")
+            .eq("id", authUser.id)
+            .single();
+
+          if (userError) throw userError;
+
+          setUserRow(userData);
+          setLoading(false);
+        } else {
+          setUserRow(null);
+          setLoading(false);
         }
-    }, [])
+      } catch (err: any) {
+        console.error("Error getting user:", err);
+        setUserRow(null);
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return (
-        <AuthContext.Provider value={{ user, loading, isSignedIn }}>
-            {children}
-        </AuthContext.Provider>
-    )
-}
+    getCurrentUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setLoading(true);
+      setError(null);
+
+      if (session?.user) {
+        try {
+          const { data: userData, error: userError } = await supabase
+            .from("users")
+            .select("*")
+            .eq("id", session.user.id)
+            .single();
+
+          if (userError) throw userError;
+
+          setUserRow(userData);
+        } catch (err: any) {
+          console.error("Error on auth state change:", err);
+          setError(err);
+          setUserRow(null);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setUserRow(null);
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  return (
+    <AuthContext.Provider
+      value={{ user: userRow, loading, error, isSignedIn }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
 export const useUser = () => {
-    const ctx = useContext(AuthContext)
-
-    if (!ctx) {
-        throw new Error("useUser must be used within an AuthProvider")
-    }
-
-    return ctx;
-}
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useUser must be used within an AuthProvider");
+  return ctx;
+};
