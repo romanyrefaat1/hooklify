@@ -151,7 +151,11 @@ export interface Database {
           id: string
           site_id: string | null
           event_type: string
-          event_data: Json | null
+          event_data: {
+            city: string;
+            name: string;
+            message: {value: string, style: string, color: string}[]
+          } | null
           timestamp: string | null
           message: string | null
         }
@@ -159,7 +163,11 @@ export interface Database {
           id?: string
           site_id?: string | null
           event_type: string
-          event_data?: Json | null
+          event_data?: {
+            city: string;
+            name: string;
+            message: {value: string, style: string, color: string}[]
+          } | null
           timestamp?: string | null
           message?: string | null
         }
@@ -167,7 +175,11 @@ export interface Database {
           id?: string
           site_id?: string | null
           event_type?: string
-          event_data?: Json | null
+          event_data?: {
+            city: string;
+            name: string;
+            message: {value: string, style: string, color: string}[]
+          } | null
           timestamp?: string | null
           message?: string | null
         }

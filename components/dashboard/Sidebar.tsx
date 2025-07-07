@@ -19,11 +19,15 @@ import {
   Icon,
 } from 'lucide-react';
 import { SiteDropdown } from './SiteDropdown';
+import { usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useUserSites } from '@/contexts/UserSites';
 
 interface SidebarItem {
   icon: React.ElementType;
   label: string;
   active?: boolean;
+  href?: string;
 }
 
 interface SidebarProps {
@@ -38,18 +42,25 @@ export default function Sidebar({ onToggle }: SidebarProps) {
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const developerContentRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname(); // e.g. "/dashboard/settings"
+  const pathSegments = pathname.split('/').filter(Boolean);
+  const currentPathSegment = pathSegments[2];
+
+  const {currSite, loading, error} = useUserSites()
+  
+  console.log("Current Path Segment: ", currentPathSegment);
 
   const sidebarItems = [
-    { icon: Home, label: 'Get started', active: true },
+    { icon: Home, label: 'Get started', active: currentPathSegment === undefined, href: "/" },
     // { icon: Globe, label: 'Websites' },
-    { icon: Globe, label: 'Widgets' },
-    { icon: Calendar, label: 'Events' },
+    { icon: Globe, label: 'Widgets', active: currentPathSegment === "widgets", href: "/widgets" },
+    { icon: Calendar, label: 'Events', active: currentPathSegment === "events", href: "/events" },
   ];
 
   const developerItems = [
-    { icon: Book, label: 'Documentation' },
-    { icon: Key, label: 'API Keys' },
-    { icon: Settings, label: 'Settings' },
+    { icon: Book, label: 'Documentation', active: currentPathSegment === "docs", href: "/docs" },
+    { icon: Key, label: 'API Keys', active: currentPathSegment === "api-keys", href: "/api-keys" },
+    { icon: Settings, label: 'Settings', active: currentPathSegment === "settings", href: "/settings" },
   ];
 
   const toggleSidebar = () => {
@@ -197,8 +208,17 @@ export default function Sidebar({ onToggle }: SidebarProps) {
           <nav className="space-y-2">
             {sidebarItems.map((item, index) => (
               <div key={index} className={`sidebar-item ${item.active ? 'active' : ''}`}>
-                <item.icon size={20} />
-                <span className="font-medium">{item.label}</span>
+                {loading || !currSite ? (
+                  <span className="flex items-center gap-2 opacity-50 cursor-not-allowed">
+                    <item.icon size={20} />
+                    <span className="font-medium">{item.label}</span>
+                  </span>
+                ) : (
+                  <Link href={`/app/${currSite.id}${item.href}`} prefetch={false} className='w-full flex gap-4 items-center'>
+                    <item.icon size={20} />
+                    <span className="font-medium">{item.label}</span>
+                  </Link>
+                )}
               </div>
             ))}
 

@@ -1,4 +1,6 @@
-import { useState } from 'react';
+"use client";
+
+import { useEffect, useState } from 'react';
 import { Check, ChevronDown, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -7,17 +9,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-const sites = [
-  { value: 'site1', label: 'Main Site' },
-  { value: 'site2', label: 'Blog Site' },
-  { value: 'site3', label: 'E-commerce' },
-  { value: 'site4', label: 'Portfolio' },
-];
+import { UserSiteContext, useUserSites } from '@/contexts/UserSites';
+import Link from 'next/link';
+import { Skeleton } from '../ui/skeleton';
+import { useParams } from 'next/navigation';
 
 export function SiteDropdown() {
-  const [selectedSite, setSelectedSite] = useState(sites[0]);
+  const {sites, loading, error} = useUserSites()
+  const {siteId} = useParams<{siteId: string}>()
+  const [selectedSite, setSelectedSite] = useState<UserSiteContext | null>(null);
   const [open, setOpen] = useState(false);
+
+  useEffect(()=> {
+    const site = sites.find(site => site.id === siteId)
+    if (site) {
+      setSelectedSite(site)
+    }
+  },[sites])
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -34,23 +42,42 @@ export function SiteDropdown() {
         className="w-48 bg-white border border-gray-200 shadow-lg rounded-lg p-1 animate-in slide-in-from-top-2 duration-200"
         align="end"
       >
-        {sites.map((site) => (
+        {loading && [1,2,3,4].map((site) => (
           <DropdownMenuItem
-            key={site.value}
+          key={site}
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-all duration-150",
+            "hover:bg-[var(--color-primary-muted)] hover:text-[var(--color-primary-dark)]",
+            "focus:bg-[var(--color-primary-muted)] focus:text-[var(--color-primary-dark)]",
+          )}
+        >
+          <Skeleton className="h-10" />
+        </DropdownMenuItem>
+        ))}
+        {!loading && !error && sites.map((site) => (
+          <Link
+            key={site.id}
+            href={`/app/${site.id}`}
+            className="flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-all duration-150"
+            onClick={() => setSelectedSite(site)}
+          >
+            <DropdownMenuItem
+            key={site.id}
             onClick={() => setSelectedSite(site)}
             className={cn(
               "flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-all duration-150",
               "hover:bg-[var(--color-primary-muted)] hover:text-[var(--color-primary-dark)]",
               "focus:bg-[var(--color-primary-muted)] focus:text-[var(--color-primary-dark)]",
-              selectedSite.value === site.value && "bg-[var(--color-primary-muted)] text-[var(--color-primary-dark)]"
+              selectedSite?.id === site.id && "bg-[var(--color-primary-muted)] text-[var(--color-primary-dark)]"
             )}
           >
             <Globe size={16} className="flex-shrink-0" />
-            <span className="flex-1 text-sm">{site.label}</span>
-            {selectedSite.value === site.value && (
+            <span className="flex-1 text-sm">{site.name}</span>
+            {selectedSite?.id === site.id && (
               <Check size={16} className="flex-shrink-0 text-[var(--color-primary)]" />
             )}
           </DropdownMenuItem>
+          </Link>
         ))}
       </DropdownMenuContent>
     </DropdownMenu>

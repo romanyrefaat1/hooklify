@@ -1,19 +1,22 @@
 "use client";
 
 import { useUserSites } from "@/contexts/UserSites";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useUser } from "@/contexts/AuthContext";
 import { makeFirstLetterUpperCase } from "@/lib/helpers/makeFirstLetterUpperCase";
 import { Globe, Users, Calendar, ArrowRight } from "lucide-react";
+import { UserSitesRow } from "@/types/supabase-schemas";
 
-export default function AllWebsitesGrid() {
-    const { sites, loading, error: sitesError } = useUserSites()
+export default function AllWebsitesGrid({sites}: {sites: UserSitesRow[]}) {
     const [error, setError] = useState<string | null>(null)
-    const { user, loading: userLoading } = useUser()
+    const { user, loading } = useUser()
+useEffect(()=>{
+    console.log(sites)
 
+})
     if (!sites && !loading && !error)
-        setError(`An Error occurred. Please refresh the page. Error: ${sitesError}`)
+        setError(`An Error occurred. Please refresh the page.`)
 
     if (error) {
         return (
@@ -31,7 +34,7 @@ export default function AllWebsitesGrid() {
         )
     }
 
-    if (loading || userLoading) {
+    if (loading) {
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1, 2, 3].map(i => (
@@ -67,6 +70,7 @@ export default function AllWebsitesGrid() {
     }
 
     if (sites.length === 0) {
+        console.log("No Websites")
         return (
             <div className="text-center py-16">
                 <div 
@@ -124,7 +128,7 @@ export default function AllWebsitesGrid() {
                         </div>
                         <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
                             <Calendar className="w-4 h-4" />
-                            <span>1 project</span>
+                            <span>{site.events?.length || 0} events</span>
                         </div>
                     </div>
 

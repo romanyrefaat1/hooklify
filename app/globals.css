@@ -155,7 +155,7 @@
 
 /* Hooklify card styling */
 .hooklify-card {
-  @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
+  @apply bg-white rounded-xl shadow-sm border border-gray-200 p-2;
 }
 
 /* Sidebar animations */
@@ -186,4 +186,8 @@
   .container {
     padding: 2.5rem;
   }
+}
+
+a, button {
+  cursor: pointer;
 }

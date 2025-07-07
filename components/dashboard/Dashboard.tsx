@@ -14,14 +14,10 @@ import {
   Webhook,
   Zap,
   Database,
-  Home,
-  X
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import DashboardRecentLogs from "./DashboardRecentLogs"
 import DashboardHeader from './DashboardHeader';
-import DashboardSetupTasks from './DashboardSetupTasks';
 
 export default function Dashboard() {
   const contentRef = useRef<HTMLDivElement>(null);
@@ -79,13 +75,6 @@ export default function Dashboard() {
   const completedTasks = setupTasks.filter(task => task.status === 'completed').length;
   const totalTasks = setupTasks.length;
   const progressPercentage = (completedTasks / totalTasks) * 100;
-
-  const recentLogs = [
-    { id: 'event_123', createdOn: '6 Jul 29, 8:20:35 pm', type: 'new_signup' },
-    { id: 'event_124', createdOn: '6 Jul 29, 8:15:22 pm', type: 'payment_success' },
-    { id: 'event_125', createdOn: '6 Jul 29, 8:10:15 pm', type: 'user_login' },
-    { id: 'event_126', createdOn: '6 Jul 29, 8:05:08 pm', type: 'new_signup' },
-  ];
 
   const getStatusIcon = (status: string) => {
     if (status === 'completed') {
@@ -174,7 +163,7 @@ export default function Dashboard() {
 
             {/* Recent Logs */}
             <div>
-              <DashboardRecentLogs recentLogs={recentLogs} />
+              <DashboardRecentLogs />
             </div>
           </div>
         </main>

@@ -1,5 +1,5 @@
 // tailwind.config.js
-const defaultTheme = require("tailwindcss/defaultTheme")
+const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
   content: [
@@ -10,42 +10,34 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        bg: {
-          page: "#FFFAEB",
-          surface: "#FFFFFF"
-        },
-        text: {
-          primary: "#1F2937",
-          secondary: "#4B5563",
-          muted: "#9CA3AF"
-        },
-        color: {
-          primary: "#F59E0B",
-          primaryLight: "#FBBF24",
-          primaryDark: "#B45309",
-          primaryMuted: "#FEF3C7",
-          secondary: "#3B82F6",
-          secondaryMuted: "#DBEAFE",
-          success: "#10B981",
-          successMuted: "#D1FAE5",
-          warning: "#FBBF24",
-          warningMuted: "#FEF9C3",
-          info: "#3B82F6",
-          infoMuted: "#DBEAFE",
-          danger: "#EF4444",
-          dangerMuted: "#FEE2E2"
-        },
-        border: {
-          DEFAULT: "#E5E7EB"
-        }
+        primary: "#F59E0B",
+        "primary-foreground": "#1F2937",
+        destructive: "#EF4444",
+        "destructive-foreground": "#ffffff",
+        secondary: "#3B82F6",
+        "secondary-foreground": "#ffffff",
+        accent: "#FEF3C7",
+        "accent-foreground": "#1F2937",
+        muted: "#9CA3AF",
+        background: "#FFFAEB",
+        foreground: "#1F2937",
+        input: "#F3F4F6",
+        ring: "#F59E0B",
+        border: "#E5E7EB",
+        success: "#10B981",
+        warning: "#FBBF24",
+        info: "#3B82F6",
+        danger: "#EF4444",
+        "bg-page": "#000000",
+        "bg-surface": "#FFFFFF",
+        "text-primary": "#1F2937",
+        "text-secondary": "#4B5563",
+        "text-muted": "#9CA3AF"
       },
       fontFamily: {
-        // Primary sans-serif stack - clean and modern
-        sans: ["Inter", "SF Pro Display", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Arial", "sans-serif"],
-        // Secondary sans-serif for headings - more personality
-        display: ["Poppins", "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-        // Monospace for code
-        mono: ["JetBrains Mono", "Fira Code", "Monaco", "Consolas", "monospace"]
+        sans: ["Inter", ...defaultTheme.fontFamily.sans],
+        display: ["Poppins", "Inter", ...defaultTheme.fontFamily.sans],
+        mono: ["JetBrains Mono", "Fira Code", ...defaultTheme.fontFamily.mono]
       },
       fontSize: {
         xs: ["0.75rem", { lineHeight: "1.5", letterSpacing: "0.025em" }],
@@ -72,6 +64,7 @@ module.exports = {
         modal: "1.5rem"
       },
       boxShadow: {
+        xs: "0 1px 2px rgba(0, 0, 0, 0.03)",
         sm: "0 1px 2px rgba(0, 0, 0, 0.05)",
         md: "0 4px 6px rgba(0, 0, 0, 0.1)",
         lg: "0 10px 15px rgba(0, 0, 0, 0.1)"
@@ -89,4 +82,4 @@ module.exports = {
     }
   },
   plugins: []
-}
+};
