@@ -1,3 +1,4 @@
+import Dashboard from "@/components/dashboard/Dashboard";
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 
@@ -13,6 +14,7 @@ export default async function AppPage (){
     return (
         <div>
             App Page
+            <Dashboard />
         </div>
     )
 }

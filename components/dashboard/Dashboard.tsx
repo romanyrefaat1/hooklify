@@ -6,7 +6,6 @@ import {
   Home, 
   Globe, 
   Calendar, 
-  FileText, 
   Code, 
   Book, 
   Key, 
@@ -26,10 +25,10 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { SiteDropdown } from '@/components/SiteDropdown';
+import { SiteDropdown } from './SiteDropdown';
 import { Badge } from '@/components/ui/badge';
 
-const Index = () => {
+export default function Dashboard (){
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [developerExpanded, setDeveloperExpanded] = useState(true);
@@ -575,5 +574,3 @@ const Index = () => {
     </div>
   );
 };
-
-export default Index;
