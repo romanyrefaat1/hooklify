@@ -15,7 +15,10 @@ export async function POST(req: NextRequest) {
   const { siteId, widgetId } = await req.json();
 
   if (!siteAPIKey || !widgetAPIKey || !siteId || !widgetId) {
-    return NextResponse.json({ error: 'Missing Site or Widget: API keys or IDs.' }, { status: 400 })
+    return NextResponse.json({ error: 'Missing Site or Widget: API keys or IDs.' }, { status: 400, headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    } })
   }
 
   const cleanSiteAPIKey   = siteAPIKey.replace(/^site_/, '')
@@ -32,7 +35,10 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (wErr || !widget || widget.api_key !== cleanWidgetAPIKey) {
-    return NextResponse.json({ error: 'Invalid widget key' }, { status: 403 })
+    return NextResponse.json({ error: 'Invalid widget key' }, { status: 403, headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    } })
   }
 
   const { data: site, error: sErr } = await supabaseAdmin
@@ -43,7 +49,10 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (sErr || !site) {
-    return NextResponse.json({ error: 'Invalid site key' }, { status: 403 })
+    return NextResponse.json({ error: 'Invalid site key' }, { status: 403, headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    } })
   }
 
   const token = jwt.sign(
