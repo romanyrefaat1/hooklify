@@ -15,37 +15,67 @@ interface RichTextSegment {
 
 export async function POST(req: NextRequest) {
   try {
-    const apiKey = req.headers.get('x-api-key');
+    const siteApiKey = req.headers.get('x-site-api-key');
+    const widgetApiKey = req.headers.get('x-widget-api-key');
+    console.log(siteApiKey, widgetApiKey);
     
-    if (!apiKey) {
+    if (!siteApiKey || !widgetApiKey) {
       return NextResponse.json({ error: 'Missing API key' }, { status: 400 });
     }
     
     // Remove the "site_" prefix if present
-    const cleanApiKey = apiKey.startsWith('site_') ? apiKey.substring(5) : apiKey;
+    const cleanSiteApiKey = siteApiKey.startsWith('site_') ? siteApiKey.substring(5) : siteApiKey;
+    const cleanWidgetApiKey = widgetApiKey.startsWith('widget_') ? widgetApiKey.substring(7) : widgetApiKey;
     
     const body: {
       event_type: string;
       event_data: any;
       message?: string | RichTextSegment[]
+      widget_id: string;
+      site_id: string;
     } = await req.json();
     
-    const { event_type, event_data, message } = body;
+    const { event_type, event_data, message, widget_id, site_id } = body;
     
     if (!event_type) {
       return NextResponse.json({ error: 'Missing event_type' }, { status: 400 });
     }
     
+    console.log("site-api-key:", cleanSiteApiKey);
+    console.log("widget-api-key:", cleanWidgetApiKey);
+    
     // Look up the site using the clean API key
     const { data: site, error: siteError } = await supabaseAdmin
       .from('sites')
       .select('*, user_id') // Make sure to select user_id
-      .eq('api_key', cleanApiKey)
+      .eq('id', site_id)
       .single();
     
     if (siteError || !site) {
       console.error('Site lookup error:', siteError);
-      return NextResponse.json({ error: 'Invalid API key' }, { status: 403 });
+      return NextResponse.json({ error: 'Invalid Website ID' }, { status: 403 });
+    }
+
+    if (site.api_key !== cleanSiteApiKey) {
+      console.error('Invalid Website API key');
+      return NextResponse.json({ error: 'Invalid Website API key' }, { status: 403 });
+    }
+
+    // Look up the widget using the clean API key
+    const { data: widget, error: widgetError } = await supabaseAdmin
+      .from('widgets')
+      .select('*') // Make sure to select user_id
+      .eq('id', widget_id)
+      .single();
+    
+    if (widgetError || !widget) {
+      console.error('Widget lookup error:', widgetError);
+      return NextResponse.json({ error: 'Invalid Widget ID' }, { status: 403 });
+    }
+
+    if (widget.api_key !== cleanWidgetApiKey) {
+      console.error('Invalid Widget API key');
+      return NextResponse.json({ error: 'Invalid Widget API key' }, { status: 403 });
     }
 
     // ============================================
@@ -72,6 +102,7 @@ export async function POST(req: NextRequest) {
       .from('events')
       .insert({
         site_id: site.id,
+        widget_id: widget.id,
         event_type,
         event_data: {
           ...event_data,
@@ -127,7 +158,7 @@ export async function POST(req: NextRequest) {
       .channel('social-proof-events')
       .send({
         type: 'broadcast',
-        event: 'social-proof-event',
+        event: `social-proof-event-${widget_id}`,
         payload: broadcastPayload
       });
     

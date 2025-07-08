@@ -46,6 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.error("Error getting user:", err);
         setUserRow(null);
         setError(err);
+        setLoading(false);
       } finally {
         setLoading(false);
       }
@@ -81,7 +82,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUserRow(null);
         setLoading(false);
       }
-    });
+    }
+  );
 
     return () => {
       subscription.unsubscribe();

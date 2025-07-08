@@ -1,12 +1,13 @@
 "use client"
 
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useState } from "react";
 
-export default function SearchInput ({ queryName }: { queryName?: string}) {
+export default function SearchInput ({ queryName, placeholder="Search for anything..", className }: { queryName?: string, placeholder?: string, className?: string}) {
     const [ query, setQuery ] = useState<string>("");
     if (!queryName) {
         queryName = "q"
@@ -40,20 +41,21 @@ export default function SearchInput ({ queryName }: { queryName?: string}) {
     }, [queryName, query])
     
     return (
-        <div className="relative flex-1 max-w-md">
+        <div className="relative flex-1 w-full">
             <Search
             className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-muted)' }} />
             <Input 
                 type="search" 
-                placeholder="Search for an Website"
+                placeholder={placeholder}
                 value={query}
                 onChange={(e) => handleSearch(e)}
-                className="pl-10 h-12 text-base border-2 transition-all duration-200 focus:border-2"
                 style={{ 
                     backgroundColor: 'var(--bg-surface)',
                     borderColor: 'var(--color-border)',
                     color: 'var(--text-primary)'
                 }}
+                className={cn("pl-10  w-full h-12 text-base border-2 transition-all duration-200 focus:border-2", className)}
+
             />
         </div>
     )

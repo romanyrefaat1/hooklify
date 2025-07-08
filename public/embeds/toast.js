@@ -5,8 +5,11 @@
   // Get both API keys from script attributes
   const siteApiKey = document.currentScript.getAttribute('site-api-key');
   const widgetApiKey = document.currentScript.getAttribute('widget-api-key');
+  const widget_id = document.currentScript.getAttribute('widget-id');
+  const site_id = document.currentScript.getAttribute('site-id');
   
   console.log('[SocialProof] Script starting with Site API key:', siteApiKey, 'Widget API key:', widgetApiKey);
+  
   
   // Configuration
   const CONFIG = {
@@ -220,7 +223,7 @@
   
   // Utility functions
   function updateToastPositionsSmooth() {
-    const customStyles = currentWidgetConfig?.style || {};
+    const customStyles = currentWidgetConfig?.styles?.["info"] || {};
     const hasTop = customStyles.top !== undefined;
     const hasBottom = customStyles.bottom !== undefined;
     const hasLeft = customStyles.left !== undefined;
@@ -322,7 +325,7 @@
     }
   }
   
-  function showToast(message, timestamp) {
+  function showToast(message, timestamp, event_type) {
     console.log('[SocialProof] Showing toast:', message);
   
     const toast = document.createElement('div');
@@ -341,8 +344,13 @@
       containerElement = aTag; // Container becomes the link
     }
   
-    // Determine animation direction based on custom styles
-    const customStyles = currentWidgetConfig?.style || {};
+    // Determine animation direction and apply styles based on current widget config
+    const defaultStyle = currentWidgetConfig?.styles?.[event_type] || currentWidgetConfig?.default_style || 'default';
+    const customStyles = currentWidgetConfig?.styles?.[defaultStyle] || {};
+    
+    console.log("XLM: DEFAULT STYLE", defaultStyle);
+    console.log("XLM: CUSTOM STYLES", customStyles);
+  
     const hasLeft = customStyles.left !== undefined;
     const hasRight = customStyles.right !== undefined;
     const hasTop = customStyles.top !== undefined;
@@ -362,9 +370,9 @@
       toast.classList.add('from-right');
     }
   
-    // Apply custom widget styles if available
-    if (currentWidgetConfig && currentWidgetConfig.style) {
-      applyCustomStyles(toast, currentWidgetConfig.style);
+    // Apply custom widget styles if available - FIXED: pass the specific style object
+    if (currentWidgetConfig && currentWidgetConfig.styles) {
+      applyCustomStyles(toast, customStyles); // ✅ Pass the specific style object, not the entire styles container
     }
   
     // Render rich text or plain text
@@ -389,13 +397,13 @@
     // Time ago element
     const timeAgoEl = document.createElement('span');
     timeAgoEl.textContent = timeAgo(timestamp);
-    timeAgoEl.style.color = currentWidgetConfig?.style?.color || 'rgba(255, 255, 255, 0.8)';
+    timeAgoEl.style.color = customStyles?.color || 'rgba(255, 255, 255, 0.8)'; // Use the actual style color
   
     // Update time every 5 seconds
     const intervalId = setInterval(() => {
       timeAgoEl.textContent = timeAgo(timestamp);
     }, 5000);
-
+  
     // Powered by element
     const poweredBy = document.createElement('span');
     poweredBy.innerHTML = 'Powered by <a href="https://hooklify.vercel.app" target="_blank" rel="noopener noreferrer" style="color:rgb(38, 100, 40); text-decoration: none; font-weight: 700; font-size: 12px">Hooklify</a>';
@@ -434,9 +442,9 @@
         if (index > -1) {
           activeToasts.splice(index, 1);
         }
- 
+  
         clearInterval(intervalId);
-
+  
         // Remove from DOM - remove the container element
         if (containerElement.parentNode) {
           containerElement.parentNode.removeChild(containerElement);
@@ -575,7 +583,7 @@
     if (eventToShow) {
       const message = formatEventMessage(eventToShow);
       const timestamp = eventToShow.timestamp;
-      showToast(message, timestamp);
+      showToast(message, timestamp, eventToShow.event_type);
     }
     
     // Schedule next event
@@ -670,15 +678,21 @@
     try {
       const cleanWidgetKey = getCleanApiKey(widgetApiKey, 'widget_');
       console.log('[SocialProof] Fetching widget config for key:', cleanWidgetKey);
+
+      const response = await fetch(
+        `/api/widgets/initialize-widget` +
+        `?siteId=${currentSiteId}` +      // currentSiteId is set by getSiteIdFromApiKey
+        `&widgetId=${widget_id}` +        // <- use widget_id, not currentWidgetId
+        `&siteApiKey=${siteApiKey}` +     // <- use siteApiKey
+        `&widgetApiKey=${widgetApiKey}`   // <- use widgetApiKey
+      );  const data = await response.json();
       
-      const { data, error } = await supabaseClient
-        .from('widgets')
-        .select('*')
-        .eq('api_key', cleanWidgetKey)
-        .single();
-      
-      if (error) {
-        console.error('[SocialProof] Error fetching widget config:', error);
+      if (response.status !== 200) {
+        console.error('[SocialProof] Error fetching widget config:', response.status);
+        return null;
+      }
+      if (!data) {
+        console.error('[SocialProof] Widget config not found for key:', cleanWidgetKey);
         return null;
       }
       
@@ -695,6 +709,7 @@
     
     // Try to load from cache first
     const cachedData = loadEventsFromCache();
+    // const cachedData = null;
     
     if (cachedData && cachedData.events.length > 0) {
       fallbackEvents = cachedData.events;
@@ -815,10 +830,10 @@
   }
   
   // Initialize everything
-  console.log('[SocialProof] Testing toast...');
-  showToast([
-    {value: 'Social proof script loaded successfully!', style: 'bold', color: '#4CAF50'}
-  ]);
+  // console.log('[SocialProof] Testing toast...');
+  // showToast([
+  //   {value: 'Social proof script loaded successfully!', style: 'bold', color: '#4CAF50'}
+  // ]);
   
   const scriptTag = document.createElement('script');
   scriptTag.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
@@ -856,7 +871,7 @@
         .channel('social-proof-events')
         .on(
           'broadcast',
-          { event: 'social-proof-event' },
+          { event: `social-proof-event-${widget_id}` },
           handleLiveEvent
         )
         .subscribe((status) => {

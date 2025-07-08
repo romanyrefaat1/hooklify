@@ -42,12 +42,15 @@ export default function LogEventPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': apiKey
+          'x-site-api-key': "site_c8911a3d-91af-4b22-b3ca-6d2cd5ae9720",
+          'x-widget-api-key': "widget_7ca8e682-b4ba-4ea6-9a91-8054cfac9837"
         },
         body: JSON.stringify({
           event_type: eventType,
           event_data: { name, city },
-          message: message
+          message: message,
+          widget_id: "24451b98-3f03-42f2-8a7f-bb5f4105e62f",
+          site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa"
         })
       });
 
