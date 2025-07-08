@@ -176,13 +176,13 @@
   font-family: 'JetBrains Mono', 'Fira Code', Monaco, Consolas, monospace;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .container {
     padding: 1rem;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1025px) {
   .container {
     padding: 2.5rem;
   }

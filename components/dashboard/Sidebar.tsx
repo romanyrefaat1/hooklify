@@ -22,6 +22,7 @@ import { SiteDropdown } from './SiteDropdown';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useUserSites } from '@/contexts/UserSites';
+import { cn } from '@/lib/utils';
 
 interface SidebarItem {
   icon: React.ElementType;
@@ -274,8 +275,8 @@ export default function Sidebar({ onToggle }: SidebarProps) {
         ref={sidebarRef}
         className="hidden lg:block fixed left-4 top-4 bottom-4 w-64 bg-[var(--bg-surface)] rounded-3xl shadow-lg z-30 overflow-hidden custom-scrollbar"
       >
-        <div className="p-6 h-full flex flex-col">
-          <div className="flex items-center justify-between mb-8 flex-shrink-0">
+        <div className={cn("p-6 h-full flex flex-col", sidebarCollapsed ? 'px-1 py-4' : '')}>
+          <div className={cn("flex items-center justify-between mb-8 flex-shrink-0", sidebarCollapsed ? 'justify-center' : '')}>
             <h1 className={`text-2xl font-bold text-[var(--color-primary)] font-display transition-opacity duration-200 ${sidebarCollapsed ? 'sidebar-text opacity-0' : ''}`}>
               {!sidebarCollapsed && 'Hooklify'}
             </h1>
@@ -291,7 +292,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
             {sidebarItems.map((item, index) => (
               <div
                 key={index}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[var(--text-secondary)] transition-all duration-200 cursor-pointer ${
+                className={`flex w-full flex-shrink-0 flex items-center gap-${sidebarCollapsed ? '0' : '3'} px-0 py-2 rounded-lg text-[var(--text-secondary)] transition-all duration-200 cursor-pointer ${
                   item.active
                     ? 'bg-[var(--color-primary-muted)] text-[var(--color-primary-dark)] font-medium'
                     : 'hover:bg-[var(--color-primary-muted)]/90 hover:text-[var(--color-primary-dark)]'
@@ -330,7 +331,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
                 {developerItems.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-3 px-3 py-2 rounded-lg text-[var(--text-secondary)] transition-all duration-200 cursor-pointer hover:bg-[var(--color-primary-muted)]/90 hover:text-[var(--color-primary-dark)]"
+                    className="flex items-center gap-0 px-2 py-2 rounded-lg text-[var(--text-secondary)] transition-all duration-200 cursor-pointer hover:bg-[var(--color-primary-muted)]/90 hover:text-[var(--color-primary-dark)]"
                   >
                     <item.icon size={18} className="flex-shrink-0" />
                     <span>{item.label}</span>

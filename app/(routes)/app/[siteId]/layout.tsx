@@ -1,12 +1,11 @@
-import Dashboard from "@/components/dashboard/Dashboard";
-import Sidebar from "@/components/dashboard/Sidebar";
-import { createClient } from "@/lib/supabase/server"
-import { redirect } from "next/navigation"
+import ClientLayout from "./_components/ClientLayout";
 
-export default async function AppPage ({children}: {children: React.ReactNode}){
-    return (
-        <div className="app">
-            {children}
-        </div>
-    )
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="app">
+      <ClientLayout>
+        {children}
+      </ClientLayout>
+    </div>
+  );
 }
