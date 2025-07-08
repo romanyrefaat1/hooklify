@@ -37,8 +37,12 @@ interface SidebarProps {
 
 export default function Sidebar({ onToggle }: SidebarProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [developerExpanded, setDeveloperExpanded] = useState(true);
+
+  const isDeveloperExpanded = localStorage.getItem('is-sidebar-developer-expanded') === 'true';
+  const [developerExpanded, setDeveloperExpanded] = useState(isDeveloperExpanded);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -62,6 +66,10 @@ export default function Sidebar({ onToggle }: SidebarProps) {
     { icon: Key, label: 'API Keys', active: currentPathSegment === "api-keys", href: "/api-keys" },
     { icon: Settings, label: 'Settings', active: currentPathSegment === "settings", href: "/settings" },
   ];
+
+  useEffect(() => {
+    localStorage.setItem('is-sidebar-developer-expanded', developerExpanded.toString());
+  }, [developerExpanded]);
 
   const toggleSidebar = () => {
     const sidebar = sidebarRef.current;
@@ -259,11 +267,11 @@ export default function Sidebar({ onToggle }: SidebarProps) {
               <div className="w-8 h-8 bg-[var(--color-primary)] rounded-full flex items-center justify-center">
                 <User size={16} className="text-white" />
               </div>
-              <span className="font-medium text-sm flex-1">Site Name</span>
+              <span className="font-medium text-sm flex-1">{currSite?.name}</span>
               <div className="flex items-center gap-2">
-                <button className="p-1 hover:bg-gray-200 rounded transition-colors">
+               <Link href="/new" className="p-1 hover:bg-gray-200 rounded transition-colors">
                   <Plus size={14} />
-                </button>
+                </Link>
                 <SiteDropdown />
               </div>
             </div>
@@ -274,7 +282,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
       {/* Desktop Sidebar */}
       <div
         ref={sidebarRef}
-        className="hidden lg:block fixed left-4 top-4 bottom-4 w-64 bg-[var(--bg-surface)] rounded-3xl shadow-lg z-30 overflow-hidden custom-scrollbar"
+        className="hidden scroll-y-auto lg:block fixed left-4 top-4 bottom-4 w-64 bg-[var(--bg-surface)] rounded-3xl shadow-lg z-30 overflow-hidden custom-scrollbar"
       >
         <div className={cn("p-6 h-full flex flex-col", sidebarCollapsed ? 'px-1 py-4' : '')}>
           <div className={cn("flex items-center justify-between mb-8 flex-shrink-0", sidebarCollapsed ? 'justify-center' : '')}>
@@ -374,12 +382,13 @@ export default function Sidebar({ onToggle }: SidebarProps) {
                 <User size={16} className="text-white" />
               </div>
               <div className={`flex-1 sidebar-text transition-opacity duration-200 ${sidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'}`}>
-                <span className="font-medium text-sm">Site Name</span>
+                <span className="font-medium text-sm">{currSite?.name}</span>
               </div>
               <div className={`flex items-center gap-1 sidebar-text transition-opacity duration-200 ${sidebarCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'}`}>
-                <button className="p-1 hover:bg-gray-200 rounded transition-colors">
+               <Link href="/new" className="p-1 hover:bg-gray-200 rounded transition-colors">
+
                   <Plus size={14} />
-                </button>
+                  </Link>
                 <SiteDropdown />
               </div>
             </div>

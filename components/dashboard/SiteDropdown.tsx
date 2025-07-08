@@ -29,7 +29,7 @@ export function SiteDropdown() {
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger className="p-1 hover:bg-gray-200 rounded transition-all duration-200 hover:scale-105 focus:outline-none">
+      <DropdownMenuTrigger className="p-1 w-full hover:bg-gray-200 rounded transition-all duration-200 hover:scale-105 focus:outline-none">
         <ChevronDown 
           size={14} 
           className={cn(
@@ -46,7 +46,7 @@ export function SiteDropdown() {
           <DropdownMenuItem
           key={site}
           className={cn(
-            "flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-all duration-150",
+            "flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-all duration-150 w-full",
             "hover:bg-[var(--color-primary-muted)] hover:text-[var(--color-primary-dark)]",
             "focus:bg-[var(--color-primary-muted)] focus:text-[var(--color-primary-dark)]",
           )}
@@ -58,14 +58,14 @@ export function SiteDropdown() {
           <Link
             key={site.id}
             href={`/app/${site.id}`}
-            className="flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-all duration-150"
+            className="flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-all duration-150 w-full"
             onClick={() => setSelectedSite(site)}
           >
             <DropdownMenuItem
             key={site.id}
             onClick={() => setSelectedSite(site)}
             className={cn(
-              "flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-all duration-150",
+              "flex items-center  w-full gap-3 px-3 py-2 rounded-md cursor-pointer transition-all duration-150",
               "hover:bg-[var(--color-primary-muted)] hover:text-[var(--color-primary-dark)]",
               "focus:bg-[var(--color-primary-muted)] focus:text-[var(--color-primary-dark)]",
               selectedSite?.id === site.id && "bg-[var(--color-primary-muted)] text-[var(--color-primary-dark)]"
