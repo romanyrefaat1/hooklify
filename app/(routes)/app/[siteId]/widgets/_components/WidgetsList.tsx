@@ -13,7 +13,8 @@ import {
   CheckCircle,
   Bell,
   Layout,
-  BarChart3
+  BarChart3,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +23,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useSiteWidgets } from '@/contexts/SiteWidgetsContext';
+import Link from 'next/link';
+import { supabase } from '@/lib/supabase/client';
 
 const availableWidgetTypes = [
   {
@@ -67,6 +70,7 @@ export default function WidgetsList({ searchTerm, selectedType }: { searchTerm: 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [widgetToDelete, setWidgetToDelete] = useState(null);
   const [copiedKey, setCopiedKey] = useState(null);
+  const [deletingWidget, setDeleting] = useState(false);
 
   const filteredWidgets = widgets.filter(widget => {
     const matchesSearch = widget.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -81,9 +85,24 @@ export default function WidgetsList({ searchTerm, selectedType }: { searchTerm: 
     setTimeout(() => setCopiedKey(null), 2000);
   };
 
-  const handleDeleteWidget = (widget) => {
+  const handleDeleteWidget = async (widget) => {
     setWidgetToDelete(widget);
-    setShowDeleteModal(true);
+    setDeleting(true);
+    try {
+      const { data, error } = await supabase
+        .from('widgets')
+        .delete()
+        .eq('id', widget.id);
+      if (error) {
+        console.error('Error deleting widget:', error);
+        return;
+      }
+      setShowDeleteModal(true);
+    } catch (err) {
+      console.error('Unexpected error deleting widget:', err);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const confirmDelete = () => {
@@ -138,7 +157,7 @@ export default function WidgetsList({ searchTerm, selectedType }: { searchTerm: 
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols- lg:grid-cols- gap-6">
             {filteredWidgets.map((widget) => {
               const typeConfig = getWidgetTypeConfig(widget.type);
               const IconComponent = typeConfig.icon;
@@ -208,9 +227,9 @@ export default function WidgetsList({ searchTerm, selectedType }: { searchTerm: 
                               variant="ghost"
                               size="sm"
                               className="hover:bg-white/50"
-                              onClick={() => handleCopyApiKey(widget.api_key)}
+                              onClick={() => handleCopyApiKey("widget_"+widget.api_key)}
                             >
-                              {copiedKey === widget.api_key ? (
+                              {copiedKey === "widget_"+widget.api_key ? (
                                 <CheckCircle className="h-4 w-4 text-emerald-500" />
                               ) : (
                                 <Copy className="h-4 w-4" />
@@ -222,6 +241,8 @@ export default function WidgetsList({ searchTerm, selectedType }: { searchTerm: 
                           </TooltipContent>
                         </Tooltip>
                         <Tooltip>
+                        <Link href={`/app/${widget.site_id}/widgets/new?widgetId=${widget.id}`}>
+                          
                           <TooltipTrigger asChild>
                             <Button variant="ghost" size="sm" className="hover:bg-white/50">
                               <Edit className="h-4 w-4" />
@@ -230,6 +251,7 @@ export default function WidgetsList({ searchTerm, selectedType }: { searchTerm: 
                           <TooltipContent>
                             <p>Edit Widget</p>
                           </TooltipContent>
+                          </Link>
                         </Tooltip>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -282,7 +304,7 @@ export default function WidgetsList({ searchTerm, selectedType }: { searchTerm: 
                 onClick={confirmDelete}
                 className="bg-red-500 hover:bg-red-600 text-white"
               >
-                Delete
+                {deletingWidget ? <span> <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Deleting</span> : "Delete"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

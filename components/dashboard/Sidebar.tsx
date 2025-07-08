@@ -63,7 +63,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
 
   const developerItems = [
     { icon: Book, label: 'Documentation', active: currentPathSegment === "docs", href: "/docs" },
-    { icon: Key, label: 'API Keys', active: currentPathSegment === "api-keys", href: "/api-keys" },
+    { icon: Key, label: 'API Keys', active: currentPathSegment === "keys", href: "/keys" },
     { icon: Settings, label: 'Settings', active: currentPathSegment === "settings", href: "/settings" },
   ];
 
@@ -243,14 +243,14 @@ export default function Sidebar({ onToggle }: SidebarProps) {
               {developerExpanded && (
                 <div className="ml-6 mt-2 space-y-2">
                   {developerItems.map((item, index) => (
-                    <div key={index} className={`sidebar-item ${item.active ? 'active' : ''}`}>
+                    <div key={index} className={`sidebar-item w-full ${item.active ? 'active' : ''}`}>
                       {loading || !currSite ? (
                         <span className="flex items-center gap-2 opacity-50 cursor-not-allowed">
                           <item.icon size={18} />
                           <span className="font-medium">{item.label}</span>
                         </span>
                       ) : (
-                        <Link href={`/app/${currSite.id}${item.href}`} prefetch={false} className='w-full flex gap-4 items-center'>
+                        <Link href={`/app/${currSite.id}${item.href}`} className="w-full flex gap-4 items-center" prefetch={false}>
                           <item.icon size={18} />
                           <span className="font-medium">{item.label}</span>
                         </Link>
@@ -350,7 +350,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
                 style={{ height: developerExpanded ? 'auto' : '0' }}
               >
                 {developerItems.map((item, index) => (
-                  <div key={index} className={`sidebar-item ${item.active ? 'active' : ''}`}>
+                  <div key={index} className={`sidebar-item w-full ${item.active ? 'active' : ''}`}>
                     {loading || !currSite ? (
                       <span className="flex items-center gap-2 px-2 py-2 rounded-lg text-[var(--text-secondary)] transition-all duration-200 opacity-50 cursor-not-allowed">
                         <item.icon size={18} className="flex-shrink-0" />
@@ -359,8 +359,8 @@ export default function Sidebar({ onToggle }: SidebarProps) {
                     ) : (
                       <Link 
                         href={`/app/${currSite.id}${item.href}`} 
-                        prefetch={false} 
-                        className={`flex items-center gap-2 px-2 py-2 rounded-lg text-[var(--text-secondary)] transition-all duration-200 cursor-pointer hover:bg-[var(--color-primary-muted)]/90 hover:text-[var(--color-primary-dark)] ${
+                        
+                        className={`flex w-full items-center gap-2 px-2 py-2 rounded-lg text-[var(--text-secondary)] transition-all duration-200 cursor-pointer hover:bg-[var(--color-primary-muted)]/90 hover:text-[var(--color-primary-dark)] ${
                           item.active
                             ? 'bg-[var(--color-primary-muted)] text-[var(--color-primary-dark)] font-medium'
                             : '' 
