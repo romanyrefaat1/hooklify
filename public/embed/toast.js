@@ -5,8 +5,9 @@
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5em14empkbm5lcnJvaW9qbWFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MTkwOTgsImV4cCI6MjA2NzI5NTA5OH0.DYy8Vos2p2A9ollMdGGJCsumYWiqb15hIZFyAy-Hbiw';
 
   // Get JWT token from script attributes - this is the ONLY way to initialize the script
-  const jwtToken = document.currentScript.getAttribute('jwt-token');
-  const NEXT_PUBLIC_APP_URL = "https://hooklify-doctorspte-gmailcoms-projects.vercel.app"
+  const jwtToken = document.currentScript.getAttribute('data-jwt-token');
+  // const NEXT_PUBLIC_APP_URL = "https://hooklify-doctorspte-gmailcoms-projects.vercel.app"
+  const NEXT_PUBLIC_APP_URL = ""
 
   // Log initial script start with redacted JWT for security
   console.log('[SocialProof] Script starting with JWT token (first 20 chars):', jwtToken ? jwtToken.substring(0, 20) + '...' : 'N/A');
@@ -704,7 +705,7 @@
     try {
       console.log('[SocialProof] Refreshing JWT token...');
 
-      const response = await fetch(NEXT_PUBLIC_APP_URL+'/api/token', {
+      const response = await fetch(NEXT_PUBLIC_APP_URL+'/api/embed/auth/get-jwt', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -738,7 +739,7 @@
       console.log('[SocialProof] Initializing widget with JWT token...');
 
       const response = await fetch(NEXT_PUBLIC_APP_URL+'/api/embed/events/initialize', {
-        method: 'POST', // Using POST as per previous instruction for API routes
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },

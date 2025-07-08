@@ -1,7 +1,9 @@
+"use client"
+
 import React, { useEffect, useState } from 'react';
 import Script from 'next/script';
 
-const SocialProofWidget = () => {
+export default function EmbedToast() {
   const [jwtToken, setJwtToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -9,14 +11,17 @@ const SocialProofWidget = () => {
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        console.log('[SocialProofWidget] Fetching JWT token from /api/token...');
-        const response = await fetch('/api/token', {
+        const response = await fetch('/api/embed/auth/get-jwt', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            "x-site-api-key": "site_",
-            "x-widget-api-key": "widget_"
+            "x-site-api-key": "site_c8911a3d-91af-4b22-b3ca-6d2cd5ae9720",
+            "x-widget-api-key": "widget_cbb3e67f-8245-4079-9214-16e1c48757df"
           },
+          body: JSON.stringify({
+            siteId: "site_2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+            widgetId: "widget_29059f91-c1c5-40d4-9ff8-f21a4c6a1728"
+          })
         });
 
         if (!response.ok) {
@@ -31,7 +36,6 @@ const SocialProofWidget = () => {
         }
 
         setJwtToken(fetchedToken); // Store the fetched token in state
-        console.log('[SocialProofWidget] JWT token fetched successfully.');
       } catch (err) {
         console.error('[SocialProofWidget] Error fetching JWT token:', err);
         setError(err.message); // Store the error message
@@ -84,5 +88,3 @@ const SocialProofWidget = () => {
   // If not loading, no error, and no token (shouldn't happen if error is handled), return null
   return null;
 };
-
-export default SocialProofWidget;

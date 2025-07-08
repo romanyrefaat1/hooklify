@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
-
+import EmbedToast from "@/components/embeds/embed-toast";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -34,13 +34,14 @@ export default function RootLayout({
         site-api-key="site_9a60c59f-c247-4af4-8048-855be6898e2a"
         widget-api-key="widget_adf074c9-b2de-4e18-bab0-a1d82f6cce1c"
         ></script> */}
-        <script 
+        {/* <script 
     src="/embeds/toast.js"
     site-api-key="site_c8911a3d-91af-4b22-b3ca-6d2cd5ae9720"
     widget-api-key="widget_7ca8e682-b4ba-4ea6-9a91-8054cfac9837"
     widget-id="24451b98-3f03-42f2-8a7f-bb5f4105e62f"
     site-id="2e36d662-2ce9-4b17-b742-315fabb0f4aa">
-  </script>
+  </script> */}
+  <EmbedToast />
         </AuthProvider>
       </body>
     </html>

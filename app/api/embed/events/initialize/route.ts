@@ -1,5 +1,3 @@
-// app/api/embed/events/initialize/route.ts
-
 import { createClient } from '@supabase/supabase-js';
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
@@ -71,7 +69,7 @@ export async function POST(request: NextRequest) {
       .from('events')
       .select('*')
       .eq('site_id', finalSiteId)
-      .order('created_at', { ascending: false })
+      .order('timestamp', { ascending: false })
       .limit(15);
 
     if (eventsError) {
