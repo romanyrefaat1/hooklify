@@ -73,10 +73,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 });
     }
 
-    return NextResponse.json({
+    return new NextResponse(JSON.stringify({
       siteId: finalSiteId,
       widgetConfig: widgetData,
       fallbackEvents: eventsData || []
+    }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
     });
 
   } catch (error: any) {

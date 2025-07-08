@@ -11,7 +11,7 @@ export default function EmbedToast() {
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        const response = await fetch('/api/embed/auth/get-jwt', {
+        const response = await fetch('https://hooklify-n2laajc4t-doctorspte-gmailcoms-projects.vercel.app/api/embed/auth/get-jwt', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ export default function EmbedToast() {
   if (jwtToken) {
     return (
       <Script
-        src="/embed/toast.js"
+        src="https://cdn.jsdelivr.net/gh/romanyrefaat1/hooklify-widgets@main/widgets/toast/toast.js"
         strategy="afterInteractive"
         data-jwt-token={jwtToken}
         onLoad={() => {

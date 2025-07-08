@@ -1,4 +1,4 @@
-// app/api/embed/auth/get-jwt/route.ts
+// This is the backend API file: app/api/embed/auth/get-jwt/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
 import { createClient } from '@supabase/supabase-js'
@@ -13,8 +13,9 @@ export async function POST(req: NextRequest) {
   const siteAPIKey   = req.headers.get('x-site-api-key')
   const widgetAPIKey = req.headers.get('x-widget-api-key')
   const { siteId, widgetId } = await req.json();
+
   if (!siteAPIKey || !widgetAPIKey || !siteId || !widgetId) {
-    return NextResponse.json({ error: 'Missing Site or Widget: API keys or IDs. Ensure You have passed: Site API Key, Widget API Key, Site ID, Widget ID' }, { status: 400 })
+    return NextResponse.json({ error: 'Missing Site or Widget: API keys or IDs.' }, { status: 400 })
   }
 
   const cleanSiteAPIKey   = siteAPIKey.replace(/^site_/, '')
@@ -29,8 +30,8 @@ export async function POST(req: NextRequest) {
     .eq('id', cleanWidgetId)
     .eq('site_id', cleanSiteId)
     .single()
+
   if (wErr || !widget || widget.api_key !== cleanWidgetAPIKey) {
-    console.error("Invalid widget key", wErr, widget);
     return NextResponse.json({ error: 'Invalid widget key' }, { status: 403 })
   }
 
@@ -40,6 +41,7 @@ export async function POST(req: NextRequest) {
     .eq('api_key', cleanSiteAPIKey)
     .eq('id', cleanSiteId)
     .single()
+
   if (sErr || !site) {
     return NextResponse.json({ error: 'Invalid site key' }, { status: 403 })
   }
@@ -50,10 +52,15 @@ export async function POST(req: NextRequest) {
     { expiresIn: '5m' }
   )
 
-  return NextResponse.json({ token })
+  return new NextResponse(JSON.stringify({ token }), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    }
+  });
 }
 
-// Add support for OPTIONS preflight
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,

@@ -1,6 +1,6 @@
 // 1) Fetch token once on load or on expiry
 async function getToken() {
-  const res = await fetch('https://hooklify.vercel.app/api/token', {
+  const res = await fetch('https://hooklify.vercel.app/api/embed/auth/get-jwt', {
     method: 'POST',
     headers: {
       'x-site-api-key': SITE_API_KEY,

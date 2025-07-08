@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server' 
 import { createClient } from '@supabase/supabase-js'
 import { verifyWidgetToken } from '@/lib/jwt'
 
@@ -20,9 +20,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing event_type' }, { status: 400 })
   }
 
-  // Usage limit check (same as you had)
   const { data: canTrack } = await supabaseAdmin
     .rpc('can_track_event', { user_uuid: payload.siteId })
+
   if (!canTrack) {
     return NextResponse.json({
       error: 'Event limit reached for your plan',
@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
     }, { status: 403 })
   }
 
-  // log the event
   const { error: insertErr } = await supabaseAdmin
     .from('events')
     .insert({
@@ -40,17 +39,16 @@ export async function POST(req: NextRequest) {
       event_data: { ...event_data, message: message ?? null },
       timestamp:  new Date().toISOString()
     })
+
   if (insertErr) {
     return NextResponse.json({ error: 'Failed to log event' }, { status: 500 })
   }
 
-  // increment usage counter
   await supabaseAdmin
     .from('users')
     .update({ events_used_this_month: supabaseAdmin.rpc('events_used_this_month + 1') })
     .eq('id', payload.siteId)
 
-  // broadcast (optional)
   supabaseAdmin
     .channel('social-proof-events')
     .send({
@@ -60,5 +58,25 @@ export async function POST(req: NextRequest) {
     })
     .catch(() => {})
 
-  return NextResponse.json({ success: true })
+  return new NextResponse(JSON.stringify({ success: true }), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  })
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Max-Age': '86400'
+    }
+  });
 }
