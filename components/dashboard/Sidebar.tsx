@@ -292,7 +292,7 @@ export default function Sidebar({ onToggle }: SidebarProps) {
             {sidebarItems.map((item, index) => (
               <div
                 key={index}
-                className={`flex w-full flex-shrink-0 flex items-center gap-${sidebarCollapsed ? '0' : '3'} px-0 py-2 rounded-lg text-[var(--text-secondary)] transition-all duration-200 cursor-pointer ${
+                className={`flex w-full flex-shrink-0 flex items-center gap-${sidebarCollapsed ? '0' : '3'} px-0 pl-${sidebarCollapsed ? '0' : '4'} py-2 rounded-lg text-[var(--text-secondary)] transition-all duration-200 cursor-pointer ${
                   item.active
                     ? 'bg-[var(--color-primary-muted)] text-[var(--color-primary-dark)] font-medium'
                     : 'hover:bg-[var(--color-primary-muted)]/90 hover:text-[var(--color-primary-dark)]'
