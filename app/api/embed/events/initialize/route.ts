@@ -20,9 +20,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'JWT token is required' }, { status: 400 });
     }
 
-    // Decode JWT
     const JWT_SECRET = process.env.HOOKLIFY_JWT_SECRET!;
-    const decoded = jwt.verify(jwtToken, JWT_SECRET);
+    const decoded = jwt.verify(jwtToken, JWT_SECRET) as any;
 
     const { siteApiKey, widgetApiKey, widgetId, siteId } = decoded;
 
@@ -33,9 +32,8 @@ export async function POST(request: NextRequest) {
     const cleanSiteKey = getCleanApiKey(siteApiKey, 'site_');
     const cleanWidgetKey = getCleanApiKey(widgetApiKey, 'widget_');
 
-    // Verify site and get site ID if not provided
     let finalSiteId = siteId;
-    
+
     if (!finalSiteId) {
       const { data: siteData, error: siteError } = await supabase
         .from('sites')
@@ -50,7 +48,6 @@ export async function POST(request: NextRequest) {
       finalSiteId = siteData.id;
     }
 
-    // Fetch widget config
     const { data: widgetData, error: widgetError } = await supabase
       .from('widgets')
       .select('*')
@@ -64,7 +61,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Widget not found' }, { status: 404 });
     }
 
-    // Fetch fallback events
     const { data: eventsData, error: eventsError } = await supabase
       .from('events')
       .select('*')
@@ -83,17 +79,29 @@ export async function POST(request: NextRequest) {
       fallbackEvents: eventsData || []
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Initialize error:', error);
-    
+
     if (error.name === 'JsonWebTokenError') {
       return NextResponse.json({ error: 'Invalid JWT token' }, { status: 401 });
     }
-    
+
     if (error.name === 'TokenExpiredError') {
       return NextResponse.json({ error: 'JWT token expired' }, { status: 401 });
     }
 
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Max-Age': '86400'
+    }
+  });
 }

@@ -1,4 +1,4 @@
-// app/api/embed/auth/token/route.ts
+// app/api/embed/auth/get-jwt/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
 import { createClient } from '@supabase/supabase-js'
@@ -17,13 +17,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing Site or Widget: API keys or IDs. Ensure You have passed: Site API Key, Widget API Key, Site ID, Widget ID' }, { status: 400 })
   }
 
-  // strip prefixes if any
   const cleanSiteAPIKey   = siteAPIKey.replace(/^site_/, '')
   const cleanSiteId       = siteId.replace(/^site_/, '')
   const cleanWidgetAPIKey = widgetAPIKey.replace(/^widget_/, '')
   const cleanWidgetId     = widgetId.replace(/^widget_/, '')
 
-  // lookup widget, join to site
   const { data: widget, error: wErr } = await supabaseAdmin
     .from('widgets')
     .select('id, site_id, api_key')
@@ -46,7 +44,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid site key' }, { status: 403 })
   }
 
-  // sign a token with 5m TTL
   const token = jwt.sign(
     { siteId: site.id, widgetId: widget.id, siteApiKey: cleanSiteAPIKey, widgetApiKey: cleanWidgetAPIKey },
     JWT_SECRET,
@@ -54,4 +51,17 @@ export async function POST(req: NextRequest) {
   )
 
   return NextResponse.json({ token })
+}
+
+// Add support for OPTIONS preflight
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, x-site-api-key, x-widget-api-key',
+      'Access-Control-Max-Age': '86400'
+    }
+  });
 }
