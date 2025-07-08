@@ -1,3 +1,5 @@
+// app/api/embed/events/initialize/route.ts
+
 import { createClient } from '@supabase/supabase-js';
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
