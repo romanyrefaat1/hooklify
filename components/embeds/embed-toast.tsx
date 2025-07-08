@@ -11,7 +11,7 @@ export default function EmbedToast() {
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        const response = await fetch('https://hooklify-n2laajc4t-doctorspte-gmailcoms-projects.vercel.app/api/embed/auth/get-jwt', {
+        const response = await fetch('https://hooklify.vercel.app/api/embed/auth/get-jwt', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
