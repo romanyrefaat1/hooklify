@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/pagination";
 import Link from "next/link";
 import { useState, useMemo } from "react";
+import { usePathname } from "next/navigation";
 
 // Server Component: Recent Logs Table
 interface Log {
@@ -438,6 +439,7 @@ message: [
   },
 ]}
   const [currentPage, setCurrentPage] = useState(1);
+  const siteId = usePathname().split("/")[4];
   
   const totalEvents = currSite?.events?.length || 0;
   console.log("totalEvents:", currSite?.events);
@@ -455,8 +457,6 @@ message: [
   
   const displayedEvents = isMain ? paginatedEvents.length : Math.min(6, totalEvents);
 
-  const url = window.location.href;
-  const siteId = url.split("/")[4];
   
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
