@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import Sidebar from '@/components/dashboard/Sidebar';
-import { notFound, useParams } from 'next/navigation';
+import { notFound, useParams, usePathname } from 'next/navigation';
 import { useUserSites } from '@/contexts/UserSites';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -14,6 +14,7 @@ interface ClientLayoutProps {
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
   const { siteId } = useParams();
+  const pathname = usePathname();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -24,6 +25,37 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   const isSmallOrMediumScreen = isMobile || (typeof window !== 'undefined' && window.innerWidth < 1024);
 
   console.log('🔍 ClientLayout render - isMobile:', isMobile, 'isSmallOrMediumScreen:', isSmallOrMediumScreen, 'sidebarCollapsed:', sidebarCollapsed);
+
+  // Page transition animation effect
+  useEffect(() => {
+    console.log('🎬 Page transition animation triggered for:', pathname);
+    
+    // Reset elements to initial state first
+    gsap.set('.fade-in', {
+      opacity: 0,
+      y: 20
+    });
+
+    // Then animate them in with a slight delay to ensure DOM is ready
+    const animationTimer = setTimeout(() => {
+      gsap.to('.fade-in', {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "power2.out"
+      });
+    }, 50); // Small delay to ensure elements are in DOM
+
+    // Cleanup function
+    return () => {
+      clearTimeout(animationTimer);
+      gsap.set('.fade-in', {
+        opacity: 1,
+        y: 0
+      });
+    };
+  }, [pathname]); // Trigger animation on route change
 
   // Listen for sidebar collapse events
   useEffect(() => {

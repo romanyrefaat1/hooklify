@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
 import { 
   Globe, 
   Calendar, 
@@ -20,19 +19,6 @@ import DashboardRecentLogs from "./DashboardRecentLogs"
 import DashboardHeader from './DashboardHeader';
 
 export default function Dashboard() {
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Initial animations
-    gsap.from('.fade-in', {
-      opacity: 0,
-      y: 20,
-      duration: 0.6,
-      stagger: 0.1,
-      ease: "power2.out"
-    });
-  }, []);
-
   const setupTasks = [
     {
       id: 1,
@@ -76,27 +62,10 @@ export default function Dashboard() {
   const totalTasks = setupTasks.length;
   const progressPercentage = (completedTasks / totalTasks) * 100;
 
-  const getStatusIcon = (status: string) => {
-    if (status === 'completed') {
-      return <CheckCircle2 size={16} className="text-green-500" />;
-    }
-    return <Clock size={16} className="text-amber-500" />;
-  };
-
-  const getStatusBadge = (status: string, estimatedTime?: string | null) => {
-    if (status === 'completed') {
-      return <Badge className="bg-green-100 text-green-700 hover:bg-green-100 font-medium">Completed</Badge>;
-    }
-    if (estimatedTime) {
-      return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 font-medium">{estimatedTime}</Badge>;
-    }
-    return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100 font-medium">Pending</Badge>;
-  };
-
   return (
     <div className="w-full bg-[var(--bg-page)] font-sans custom-scrollbar">
       {/* Main Content */}
-      <div ref={contentRef} className="container">
+      <div className="container">
         <DashboardHeader 
           completedTasks={completedTasks} 
           totalTasks={totalTasks} 

@@ -77,7 +77,7 @@ const APIKeysPage = () => {
   };
 
   return (
-    <div className="min-h-screen container">
+    <div className="min-h-screen fade-in container">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
