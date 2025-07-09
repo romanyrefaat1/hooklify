@@ -27,7 +27,7 @@ interface DashboardRecentLogsProps {
   recentLogs: Log[];
 }
 
-export default function DashboardRecentLogs({isMain=false}: {isMain?: boolean}) {
+export default function DashboardRecentLogs({isMain=false, currSite}: {isMain?: boolean}) {
   // const {loading, error, currSite} = useUserSites()
   const loading = false;
   const currSite = {events: [
