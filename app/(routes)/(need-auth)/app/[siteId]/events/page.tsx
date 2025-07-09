@@ -4,7 +4,7 @@ export default function EventsPage() {
     
 
     return (
-        <div className="container">
+        <div className="my-container">
             <h1 className="mb-4">All Events</h1>
             <DashboardRecentLogs isMain={true}  />
         </div>

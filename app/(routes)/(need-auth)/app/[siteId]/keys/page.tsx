@@ -36,7 +36,7 @@ export default async function APIKeysPage({ params }) {
   const pathname = `/app/${siteId}/keys`;
 
   return (
-    <div className="min-h-screen fade-in container w-full">
+    <div className="min-h-screen fade-in my-container w-full">
       <div className="w-full mx-auto">
         <div className="mb-8">
           <div className="flex items-center justify-between">

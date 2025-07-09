@@ -61,7 +61,7 @@ export default async function WidgetsPage({ params }) {
   const widgets = await getWidgets(siteId as string);
   
   return (
-    <div className="min-h-screen fade-in container bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+    <div className="min-h-screen fade-in my-container bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
       <SiteWidgetsProvider>
       <WidgetsHeader 
         selectedType="all"

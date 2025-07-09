@@ -65,7 +65,7 @@ export default function Dashboard() {
   return (
     <div className="w-full bg-[var(--bg-page)] font-sans custom-scrollbar">
       {/* Main Content */}
-      <div className="container">
+      <div className="my-container">
         <DashboardHeader 
           completedTasks={completedTasks} 
           totalTasks={totalTasks} 
