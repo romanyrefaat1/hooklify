@@ -1,5 +1,3 @@
-import { getUser } from "@/actions/users/getUser";
-import UserSitesProvider from "@/contexts/UserSites";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -12,8 +10,8 @@ export default async function AppLayout ({children}: {children: React.ReactNode}
     if (!authUser) redirect('/login')
 
     return (
-        <UserSitesProvider>
+        <div>
             {children}
-        </UserSitesProvider>
+        </div>
     )
 }
