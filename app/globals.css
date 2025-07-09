@@ -214,13 +214,15 @@
 
 @media (max-width: 1024px) {
   .container {
-    padding: 1rem;
+    padding: 2rem;
+    width: 100%;
   }
 }
 
 @media (min-width: 1025px) {
   .container {
     padding: 2.5rem;
+    width: 100%;
   }
 }
 

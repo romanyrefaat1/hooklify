@@ -25,6 +25,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { useSiteWidgets } from '@/contexts/SiteWidgetsContext';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase/client';
+import WidgetCardSkeleton from '@/components/skeletons/WidgetCardSkeleton';
 
 const availableWidgetTypes = [
   {
@@ -66,7 +67,7 @@ const availableWidgetTypes = [
 ];
 
 export default function WidgetsList({ searchTerm, selectedType }: { searchTerm: string, selectedType: string }) {
-  const { widgets } = useSiteWidgets();
+  const { widgets , loading } = useSiteWidgets();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [widgetToDelete, setWidgetToDelete] = useState(null);
   const [copiedKey, setCopiedKey] = useState(null);
@@ -79,13 +80,24 @@ export default function WidgetsList({ searchTerm, selectedType }: { searchTerm: 
     return matchesSearch && matchesType;
   });
 
-  const handleCopyApiKey = (apiKey) => {
+  if (loading) {
+    return (
+      <div>
+        <WidgetCardSkeleton />
+        <WidgetCardSkeleton />
+        <WidgetCardSkeleton />
+        <WidgetCardSkeleton />
+      </div>
+    )
+  }
+
+  const handleCopyApiKey = (apiKey: string) => {
     navigator.clipboard.writeText(apiKey);
     setCopiedKey(apiKey);
     setTimeout(() => setCopiedKey(null), 2000);
   };
 
-  const handleDeleteWidget = async (widget) => {
+  const handleDeleteWidget = async (widget: any) => {
     setWidgetToDelete(widget);
     setDeleting(true);
     try {
@@ -106,12 +118,12 @@ export default function WidgetsList({ searchTerm, selectedType }: { searchTerm: 
   };
 
   const confirmDelete = () => {
-    console.log('Deleting widget:', widgetToDelete.id);
+    console.log('Deleting widget:', widgetToDelete?.id);
     setShowDeleteModal(false);
     setWidgetToDelete(null);
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -227,7 +239,8 @@ export default function WidgetsList({ searchTerm, selectedType }: { searchTerm: 
                               variant="ghost"
                               size="sm"
                               className="hover:bg-white/50"
-                              onClick={() => handleCopyApiKey("widget_"+widget.api_key)}
+                              onClick={() => handleCopyApiKey("widget_"+
+                              widget.api_key)}
                             >
                               {copiedKey === "widget_"+widget.api_key ? (
                                 <CheckCircle className="h-4 w-4 text-emerald-500" />

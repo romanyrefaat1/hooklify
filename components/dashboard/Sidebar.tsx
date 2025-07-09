@@ -41,8 +41,9 @@ export default function Sidebar({ onToggle }: SidebarProps) {
   
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const isDeveloperExpanded = localStorage.getItem('is-sidebar-developer-expanded') === 'true';
-  const [developerExpanded, setDeveloperExpanded] = useState(isDeveloperExpanded);
+  // const isDeveloperExpanded = window.localStorage.getItem('is-sidebar-developer-expanded') === 'true';
+  
+  const [developerExpanded, setDeveloperExpanded] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
