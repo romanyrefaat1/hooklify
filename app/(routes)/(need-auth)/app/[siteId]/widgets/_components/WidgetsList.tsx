@@ -82,7 +82,7 @@ export default function WidgetsList({ searchTerm, selectedType }: { searchTerm: 
 
   if (loading) {
     return (
-      <div>
+      <div className="flex flex-col gap-2">
         <WidgetCardSkeleton />
         <WidgetCardSkeleton />
         <WidgetCardSkeleton />
