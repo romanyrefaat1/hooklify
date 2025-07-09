@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import EmbedToast from "@/components/embeds/embed-toast";
+import PricingModal from "@/components/pricing/PricingModal";
+import PricingProvider from "@/contexts/PricingContext";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -29,7 +31,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-        {children}
+          <PricingProvider>
+            {children}
+            <PricingModal />
+          </PricingProvider>
         {/* <script src={`${process.env.NEXT_PUBLIC_APP_URL}/embeds/toast.js`}
         site-api-key="site_9a60c59f-c247-4af4-8048-855be6898e2a"
         widget-api-key="widget_adf074c9-b2de-4e18-bab0-a1d82f6cce1c"
