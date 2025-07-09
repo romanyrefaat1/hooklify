@@ -68,7 +68,7 @@ export default function EmbedToast() {
   }
 
   // Only render the Script component if the JWT token has been successfully fetched
-  if (jwtToken) {
+  // if (jwtToken) {
     return (
       <Script
         src="https://cdn.jsdelivr.net/gh/romanyrefaat1/hooklify-widgets@main/widgets/toast/toast.js"
@@ -85,7 +85,7 @@ export default function EmbedToast() {
         }}
       />
     );
-  }
+  // }
 
   // If not loading, no error, and no token (shouldn't happen if error is handled), return null
   return null;
