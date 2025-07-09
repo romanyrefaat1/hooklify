@@ -8,44 +8,44 @@ export default function EmbedToast() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        const response = await fetch('https://hooklify.vercel.app/api/embed/auth/get-jwt', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            "x-site-api-key": process.env.HOOKLIFY_SITE_KEY,
-            "x-widget-api-key": process.env.HOOKLIFY_TOAST_WIDGET_KEY
-          },
-          body: JSON.stringify({
-            siteId: process.env.HOOKLIFY_SITE_ID,
-            widgetId: process.env.HOOKLIFY_TOAST_WIDGET_ID
-          })
-        });
+  // useEffect(() => {
+  //   const fetchToken = async () => {
+  //     try {
+  //       const response = await fetch('https://hooklify.vercel.app/api/embed/auth/get-jwt', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           "x-site-api-key": process.env.HOOKLIFY_SITE_KEY,
+  //           "x-widget-api-key": process.env.HOOKLIFY_TOAST_WIDGET_KEY
+  //         },
+  //         body: JSON.stringify({
+  //           siteId: process.env.HOOKLIFY_SITE_ID,
+  //           widgetId: process.env.HOOKLIFY_TOAST_WIDGET_ID
+  //         })
+  //       });
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch JWT token: ${response.status} ${response.statusText}`);
-        }
+  //       if (!response.ok) {
+  //         throw new Error(`Failed to fetch JWT token: ${response.status} ${response.statusText}`);
+  //       }
 
-        const data = await response.json();
-        const fetchedToken = data.token;
+  //       const data = await response.json();
+  //       const fetchedToken = data.token;
 
-        if (!fetchedToken) {
-          throw new Error('JWT token not found in API response.');
-        }
+  //       if (!fetchedToken) {
+  //         throw new Error('JWT token not found in API response.');
+  //       }
 
-        setJwtToken(fetchedToken); // Store the fetched token in state
-      } catch (err) {
-        console.error('[SocialProofWidget] Error fetching JWT token:', err);
-        setError(err.message); // Store the error message
-      } finally {
-        setLoading(false); // Set loading to false once the token fetch is complete (success or error)
-      }
-    };
+  //       setJwtToken(fetchedToken); // Store the fetched token in state
+  //     } catch (err) {
+  //       console.error('[SocialProofWidget] Error fetching JWT token:', err);
+  //       setError(err.message); // Store the error message
+  //     } finally {
+  //       setLoading(false); // Set loading to false once the token fetch is complete (success or error)
+  //     }
+  //   };
 
-    fetchToken();
-  }, []); // Empty dependency array ensures this effect runs only once on mount
+  //   fetchToken();
+  // }, []); // Empty dependency array ensures this effect runs only once on mount
 
   if (loading) {
     return (
@@ -73,7 +73,9 @@ export default function EmbedToast() {
       <Script
         src="https://cdn.jsdelivr.net/gh/romanyrefaat1/hooklify-widgets@main/widgets/toast/toast.js"
         strategy="afterInteractive"
-        data-jwt-token={jwtToken}
+        // data-jwt-token={jwtToken}
+        data-site-id="site_0c812a1f-4662-4017-a841-e7475c796c3c"
+        data-widget-id="widget_d0673215-9e3e-4ef1-93fe-6eeaa42be95b"
         onLoad={() => {
           console.log('[SocialProofWidget] Social proof script loaded from /embed/toast.js');
         }}
