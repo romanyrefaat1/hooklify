@@ -71,7 +71,7 @@ export default function EmbedToast() {
   // if (jwtToken) {
     return (
       <Script
-        src="https://cdn.jsdelivr.net/gh/romanyrefaat1/hooklify-widgets/widgets/toast/toast.js"
+        src="https://cdn.jsdelivr.net/gh/romanyrefaat1/hooklify-widgets@7a5a7af248244b8a2dfd2a6be08bc1284332f68f/widgets/toast/toast.js"
         strategy="afterInteractive"
         // data-jwt-token={jwtToken}
         data-site-id="site_0c812a1f-4662-4017-a841-e7475c796c3c"
