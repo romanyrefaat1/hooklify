@@ -30,414 +30,414 @@ interface DashboardRecentLogsProps {
 export default function DashboardRecentLogs({isMain=false, currSite}: {isMain?: boolean}) {
   // const {loading, error, currSite} = useUserSites()
   const loading = false;
-  const currSite = {events: [
-    {
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },
-  {
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },
-  {
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  }
-  , {
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },
-  {
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },
-  {
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  }, {
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },{
-    event_type: "user_signup",
-    id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
-    message: null,
-    site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
-    timestamp: "2025-07-07T22:21:07.433+00:00",
-    event_data: {
-      city: "New York",
-      name: "John Doe",
-message: [
-  {color: "#e74c3c", style: "bold", value: "John Doe"},
-  {value: " just signed up from "},
-  {color: "#3498db", style: "bold", value: "New York"},
-  {value: "!"}
-]
-    }
-  },
-]}
+//   const currSite = {events: [
+//     {
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },
+//   {
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },
+//   {
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   }
+//   , {
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },
+//   {
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },
+//   {
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   }, {
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },{
+//     event_type: "user_signup",
+//     id: "49a2628f-6a50-4db9-86bc-bf4bb12fb51c",
+//     message: null,
+//     site_id: "2e36d662-2ce9-4b17-b742-315fabb0f4aa",
+//     timestamp: "2025-07-07T22:21:07.433+00:00",
+//     event_data: {
+//       city: "New York",
+//       name: "John Doe",
+// message: [
+//   {color: "#e74c3c", style: "bold", value: "John Doe"},
+//   {value: " just signed up from "},
+//   {color: "#3498db", style: "bold", value: "New York"},
+//   {value: "!"}
+// ]
+//     }
+//   },
+// ]}
   const [currentPage, setCurrentPage] = useState(1);
   const siteId = usePathname().split("/")[4];
   
